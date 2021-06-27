@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+<body bgcolor="gray">
+	<div id="app">
+		<span>{{greeting}} - {{fruit}}</span>
+		<p r-text="greeting">default text</p>
+		<p r-html="htmlStr" r-on="click:clickFn">default text</p>
+		<div>
+			<input type="text" r-model="greeting">
+		</div>
+		<ul>
+			<li>{{person.name}}</li>
+			<li>{{person.age}}</li>
+		</ul>
+		<ul>
+			<li r-text="person.name">default person.name</li>
+			<li r-text="person.age">default person.age</li>
+		</ul>
+	</div>
+	<script type="module">
+		import Rue from '/index.js'
+		var app = new Rue({
+			el: '#app'
+			,data: {
+				greeting: 'hi'
+				,person: {
+					name: 'nat'
+					,age: 20
+				}
+				,htmlStr: '<b>okay</b>'
+				,fruit: 'apple'
+			}
+			,methods: {
+				clickFn(e){
+					console.log(this, e);
+				}
+			}
+		});
+		window.app = app;
+
+	</script>
+</body>
+</html>

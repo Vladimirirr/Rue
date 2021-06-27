@@ -1,0 +1,17 @@
+# EditorConfig is awesome: https://EditorConfig.org
+# Install `Editorconfig for VS Code` plugin to enable the `.editorconfig` file for current workspace
+
+# top-most EditorConfig file
+root = true
+
+# newline ending with every file
+# will modify files on save
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+# set js and html files
+[*.{js,html}]
+charset = utf-8
+indent_style = tab
+indent_size = 2
