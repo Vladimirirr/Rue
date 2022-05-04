@@ -1,11 +1,11 @@
-var uuid = 0 // 防止重复收集依赖
+var uid = 0 // 防止重复收集依赖
 // <b>{{name}} - {{name}}</b>
 // 会进行两次name的依赖收集，当name改变时触发了两次相同的watcher#update
 
 export class Dep {
   constructor() {
-    this.subs = [] // 订阅者
-    this.id = uuid++
+    this.subs = [] // 订阅者，观察者
+    this.id = uid++
   }
   add(watcher) {
     this.subs.push(watcher)

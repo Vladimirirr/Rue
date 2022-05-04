@@ -1,3 +1,7 @@
+/**
+ * 递归的遍历一个数据对象，使得它最终变成响应式对象
+ */
+
 import { defineReactive } from './defineReactive.js'
 import { arrayMutation } from './arrayMutation.js'
 import { observe } from './observe.js'

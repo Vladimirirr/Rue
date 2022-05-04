@@ -1,10 +1,12 @@
+/**
+ * 劫持数据对象的每个依赖，使它们响应式化
+ */
+
 import { Dep } from './Dep.js'
 import { observe } from './observe.js'
 
-var uuid = 0
-
 function dependArray(arr) {
-  for (let e of arr) {
+  for (const e of arr) {
     e && e.__ob__ && e.__ob__.dep.depend()
     if (Array.isArray(e)) {
       dependArray(e)
@@ -15,17 +17,15 @@ function dependArray(arr) {
 export function defineReactive(data, key) {
   var dep = new Dep() // 每个值（依赖）都有自己的订阅列表
   var value = data[key]
-  var childOb = observe(value) // childOb = value.__ob__ = data[key].__ob__
-  // childOb用于实现数组的依赖触发（以及类似于Vue.set或Vue.delete的方法触发更新），因为childOb就是数组value.__ob__
-  // 当value是对象时，value闭包的dep和value.__ob__.dep保存的是同一份的watcher
-  // 比如data[key]是数组，在闭包中保存的dep是用于确保整个data[key]被覆盖时可以被setter监听到从而继续保持响应式
-  // childOb其实就是data[key]上的__ob__，watcher实例初始化时的getter同时也把watcher收集到了data[key]上的__ob__.dep，此__ob__.dep就是用来在arrayMutation方法内部触发依赖的
-  // __ob__是为了解决数组响应式而提出的
+  var childOb = observe(value) // childOb => value.__ob__ => data[key].__ob__
+  // 当value是对象时（包括数组），value闭包的dep和value.__ob__.dep保存的watchers是一样的，闭包中的dep保证了整个value被覆写时能够触发响应，而childOb保证了$set和$delete方法动态添加或删除value属性时能触发响应，以及value是数组时，数组的变异操作也能触发响应
 
-  // 下面用于测试
-  window.uuid = uuid
-  window['dep' + uuid] = { dep, childOb, id: `${JSON.stringify(data)}[${key}]` }
-  uuid++
+  // 下面用于测试，查看此依赖的闭包的内容
+  window['dep' + key] = {
+    dep,
+    value,
+    childOb,
+  }
 
   Object.defineProperty(data, key, {
     enumerable: true,

@@ -1,15 +1,19 @@
 ## 重点
-- 用到数据的地方就是依赖，在getter中收集依赖，在setter中触发依赖
-- 依赖就是具体值的路径（字符串），比如`'data.addr.door'`，而watcher订阅的就是此路径（依赖）
-- Dep用来收集和管理依赖的订阅者
-- 数据变化时（依赖变化时），对应依赖的setter就通知它的dep，让dep激活它管理的全部watcher，以实现特定的功能（比如更新组件）
-- 收集依赖收集的就是watcher，触发依赖触发的也是watcher
-- watcher把自己放到全局的某个位置，比如Dep.target，以便被收集
-- 只有watcher触发的对应依赖的getter才会进行依赖收集（即把watcher自己收集起来）
+- 被用到的数据就是依赖，在getter中收集依赖的订阅者（观察者，即watchers），在setter中触发依赖之前收集的订阅者
+- dep数组用来收集和管理依赖的订阅者
+- 数据变化时（依赖变化时），对应依赖的setter就通知它的dep，让dep激活它管理的全部watcher，以实现特定的功能（比如更新对应的视图）
+- 当前激活的watcher把自己放到全局的某个位置，比如Dep.target，以便被其他需要的依赖收集
 
 ## 响应式化的基本流程
-observe（响应式化入口） -> Observer（遍历对象） -> defineReactive（定义劫持） -> observe（间接递归） ...
+observe（响应式化一个数据对象） -> Observer（遍历此对象） -> defineReactive（劫持此对象的每个数据） -> observe（递归子对象） ...
 
 ## 其他
 这里实现的响应式更新是Vue1.x的方法，以节点为单位进行更新，在渲染模板时遇到插值表达式或指令就会实例化对应的watcher，这是一种细粒度的更新，而Vue2.x以组件为单位进行更新，传入watcher的不再是表达式字符串而是组件对应的渲染函数，这是一种中粒度的更新。
+Vue1.x的细颗粒更新的主要缺点：
+  1. 无法支撑大型应用，因为依赖越多需要的watcher实例越多，还包括其他用户自定义的watcher（watch和computed），造成大量的内存消耗
+  2. 由于操作的都是dom对象，也仅支持web端
+
+在Vue2.x中，更新以组件为单位，一个组件只有一个渲染watcher，每个依赖的dep都收集了此渲染watcher，此渲染watcher产生此组件的虚拟dom，在组件内对新旧虚拟dom进行diff比较（使用的是snabbdom这款虚拟dom引擎），最终将有差异的部分patch到此组件引用的真实dom上，从而有效地解决了Vue1.x的2个主要缺点：
+  1. 每个依赖不再有自己独立的watcher，而是都收集了同一个渲染watcher
+  2. 引入了虚拟dom，使得跨平台得到了保证
 
