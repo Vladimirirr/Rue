@@ -1,3 +1,3 @@
 // 出口
 
-export {compile} from './compile.js'
+export { compile } from './compile.js'

@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<title>test</title>
-</head>
-<body bgcolor="gray">
-<script type="module">
-import {observe} from './observe.js'
-import {Watcher} from './Watcher.js'
+  <head>
+    <meta charset="UTF-8" />
+    <title>test</title>
+  </head>
+  <body bgcolor="gray">
+    <script type="module">
+      import { observe } from './observe.js'
+      import { Watcher } from './Watcher.js'
 
-var data = {
-	name: 'nat',
-	addr: {
-		door: '8004',
-		phone: '10086',
-		arr: [{a: 1, b: 2}]
-		// members: ['father', 'mother', 'son', 'daughter', {average: 20}]
-		// members: ['father', 'mother', 'son', 'daughter']
-	}
-};
+      var data = {
+        name: 'nat',
+        addr: {
+          door: '8004',
+          phone: '10086',
+          arr: [{ a: 1, b: 2 }],
+          // members: ['father', 'mother', 'son', 'daughter', {average: 20}]
+          // members: ['father', 'mother', 'son', 'daughter']
+        },
+      }
 
-observe(data); // observe -> new Observer -> defineReactive -> observe
+      observe(data) // observe -> new Observer -> defineReactive -> observe
 
-new Watcher(data, 'name', (o, n)=>{
-	console.log(o, n);
-});
+      new Watcher(data, 'name', (o, n) => {
+        console.log(o, n)
+      })
 
-// new Watcher(data, 'addr.arr', (o, n)=>{
-// 	console.log(`o = ${JSON.stringify(o)}, n = ${JSON.stringify(n)}`);
-// });
+      // new Watcher(data, 'addr.arr', (o, n)=>{
+      // 	console.log(`o = ${JSON.stringify(o)}, n = ${JSON.stringify(n)}`);
+      // });
 
-// data.addr.members.push(1);
-// data.addr.members.push({aa: 22});
-// data.addr.members.push([99, 88]);
+      // data.addr.members.push(1);
+      // data.addr.members.push({aa: 22});
+      // data.addr.members.push([99, 88]);
 
-// data.addr.phone = {
-// 	aa: 10,
-// 	bb: 20
-// };
+      // data.addr.phone = {
+      // 	aa: 10,
+      // 	bb: 20
+      // };
 
-console.log(data);
-window.data = data;
-
-</script>
-</body>
+      console.log(data)
+      window.data = data
+    </script>
+  </body>
 </html>
