@@ -27,13 +27,9 @@ export class Observer {
     }
   }
   walk(data) {
-    for (const x in data) {
-      defineReactive(data, x)
-    }
+    Object.keys(data).forEach((i) => defineReactive(data, i))
   }
   walkArray(data) {
-    for (const x = 0; x < data.length; x++) {
-      observe(data[x])
-    }
+    data.forEach((i) => observe(i))
   }
 }

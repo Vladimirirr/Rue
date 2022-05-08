@@ -34,7 +34,8 @@ export function defineReactive(data, key) {
       dep.depend()
       if (childOb) {
         childOb.dep.depend()
-        // 监听数组就是监听它的全部子孙
+        // 依赖一个数组就是依赖它的全部子孙
+        // 那么它的全部子孙也要有同样的根数组的watchers
         if (Array.isArray(value)) {
           dependArray(value)
         }
