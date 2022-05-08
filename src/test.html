@@ -7,7 +7,7 @@
     <div id="app">
       <span>{{greeting}} - {{fruit}}</span>
       <p r-text="greeting">default text</p>
-      <p r-html="htmlStr" r-on="click:clickFn">default text</p>
+      <button r-html="htmlStr" r-on="click:clickFn">default text</button>
       <div>
         <input type="text" r-model="greeting" />
       </div>
@@ -21,8 +21,8 @@
       </ul>
     </div>
     <script type="module">
-      import Rue from '/index.js'
-      var app = new Rue({
+      import Rue from './index.js'
+      const app = new Rue({
         el: '#app',
         data: {
           greeting: 'hi',

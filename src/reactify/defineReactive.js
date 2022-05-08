@@ -31,14 +31,12 @@ export function defineReactive(data, key) {
     enumerable: true,
     configurable: true,
     get() {
-      if (Dep.target) {
-        dep.depend()
-        if (childOb) {
-          childOb.dep.depend()
-          // 监听数组就是监听它的全部子孙
-          if (Array.isArray(value)) {
-            dependArray(value)
-          }
+      dep.depend()
+      if (childOb) {
+        childOb.dep.depend()
+        // 监听数组就是监听它的全部子孙
+        if (Array.isArray(value)) {
+          dependArray(value)
         }
       }
       return value

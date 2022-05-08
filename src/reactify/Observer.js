@@ -27,12 +27,12 @@ export class Observer {
     }
   }
   walk(data) {
-    for (let x in data) {
+    for (const x in data) {
       defineReactive(data, x)
     }
   }
   walkArray(data) {
-    for (let x = 0; x < data.length; x++) {
+    for (const x = 0; x < data.length; x++) {
       observe(data[x])
     }
   }

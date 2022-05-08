@@ -11,11 +11,11 @@ var arrayMethods = [
 var arrayMutation = {} // 导出的具有变异方法的数组原型
 
 arrayMethods.forEach((fnName) => {
-  var origin = [][fnName] // 原始数组方法
-  arrayMutation[fnName] = function () {
-    var args = [].slice.call(arguments)
-    var res = origin.apply(this, args)
-    var ob = this.__ob__
+  const originFunction = [][fnName] // 原始数组方法
+  const mutatedFunction = function () {
+    const args = [].slice.call(arguments)
+    const res = originFunction.apply(this, args)
+    const ob = this.__ob__
     var inserted // 新插入的元素集合
     switch (fnName) {
       case 'push':
@@ -32,13 +32,13 @@ arrayMethods.forEach((fnName) => {
     ob.dep.notify()
     return res
   }
-})
-
-for (let x in arrayMutation) {
-  Object.defineProperty(arrayMutation, x, {
+  Object.defineProperty(arrayMutation, fnName, {
+    configurable: true,
     enumerable: false,
+    writable: true,
+    value: mutatedFunction,
   })
-}
+})
 
 arrayMutation.__proto__ = [].__proto__
 

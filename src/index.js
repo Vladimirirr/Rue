@@ -2,11 +2,13 @@ import { compile } from './dom/index.js'
 import { observe } from './reactify/index.js'
 
 export default class Rue {
-  constructor(opt) {
-    this.$el = opt.el
-    this.$data = opt.data
-    this.$methods = opt.methods
-    this.$opt = opt
+  constructor(opts) {
+    // $ 私有属性
+    // _ 只读属性
+    this.$el = document.querySelector(opts.el)
+    this.$data = opts.data
+    this.$methods = opts.methods
+    this.$opts = opts
     // 响应式
     observe(this.$data)
     // 编译指令和初始化视图
@@ -15,7 +17,7 @@ export default class Rue {
     this.proxyData(this.$data)
   }
   proxyData(data) {
-    for (let x in data) {
+    for (const x in data) {
       Object.defineProperty(this, x, {
         get() {
           return data[x]
