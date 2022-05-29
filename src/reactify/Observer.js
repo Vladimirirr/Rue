@@ -8,8 +8,9 @@ import { observe } from './observe.js'
 import { Dep } from './Dep.js'
 
 export class Observer {
-  constructor(value) {
+  constructor(value, vm) {
     this.value = value
+    this.vm = vm
     this.dep = new Dep()
     Object.defineProperty(value, '__ob__', {
       // 把Observer实例放在对象身上
@@ -27,9 +28,11 @@ export class Observer {
     }
   }
   walk(data) {
-    Object.keys(data).forEach((i) => defineReactive(data, i))
+    const { vm } = this
+    Object.keys(data).forEach((i) => defineReactive(data, i, vm))
   }
   walkArray(data) {
-    data.forEach((i) => observe(i))
+    const { vm } = this
+    data.forEach((i) => observe(i, vm))
   }
 }

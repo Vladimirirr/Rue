@@ -4,7 +4,7 @@
 
 import { Observer } from './Observer.js'
 
-export function observe(value) {
+export function observe(value, vm) {
   if (!(value instanceof Object)) return
-  return new Observer(value)
+  return new Observer(value, vm)
 }

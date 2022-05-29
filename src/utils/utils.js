@@ -31,6 +31,27 @@ export function parsePath(path) {
   }
 }
 
+/**
+ * 深拷贝一个对象，不要传入循环引用
+ */
+export function deepClone(source){
+  const toString = Object.prototype.toString
+  const result = Array.isArray(source) ? [] : {}
+  Object.keys(source).forEach((key) => {
+    const targetKeyValue = source[key]
+    if (typeof targetKeyValue === 'object'){
+      const type = toString.call(targetKeyValue)
+      // 只深拷贝 基本对象 和 数组
+      if (type === '[object Object]' || type === '[object Array]'){
+        result[key] = deepClone(targetKeyValue)
+        return
+      }
+    }
+    result[key] = targetKeyValue
+  })
+  return result
+}
+
 export function setValueWithReactive(target, key, value) {
   // 对于数组利用splice实现添加元素
   if (Array.isArray(target)) {

@@ -1,6 +1,4 @@
-var uid = 0 // 防止重复收集依赖
-// <b>{{name}} - {{name}}</b>
-// 会进行两次name的依赖收集，当name改变时触发了两次相同的watcher#update
+var uid = 0 // 唯一标识
 
 export class Dep {
   constructor() {

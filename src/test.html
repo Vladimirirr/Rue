@@ -23,8 +23,8 @@
     <script type="module">
       import Rue from './index.js'
       const app = new Rue({
-        el: '#app',
-        data: {
+        el: '#app', // 传入一个合法且存在的选择器
+        data: { // 此部分将被深拷贝
           greeting: 'hi',
           person: {
             name: 'nat',
@@ -35,7 +35,22 @@
         },
         methods: {
           clickFn(e) {
-            console.log(this, e)
+            // console.log(this, e)
+            this.greeting = 'clicked'
+          },
+        },
+        lifecycle: {
+          created(){
+            // 初始化完成，数据以及响应式化，即将进行 dom 挂载
+            console.log('lifecycle: created')
+          },
+          mounted(){
+            // 元素已经被挂载
+            console.log('lifecycle: mounted')
+          },
+          updated(){
+            // 元素已经被更新
+            console.log('lifecycle: updated')
           },
         },
       })

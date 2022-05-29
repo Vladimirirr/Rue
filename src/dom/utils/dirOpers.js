@@ -1,13 +1,17 @@
-import updaterElementFunctions from './domOpers.js'
 import { chainGet, chainSet } from '../../utils/utils.js'
 import { Watcher } from '../../reactify/Watcher.js'
+
+// 更新元素的方法
+import updaterElementFunctions from './domOpers.js'
 
 const compileElementFunctions = {
   // 指令方法集
   text(node, exp, vm) {
     // 还需要增加传入的值是表达式的情况，而非路径
     const { text } = updaterElementFunctions
+    // 渲染此节点的初始值
     text(node, exp, vm)
+    // 对依赖的值创建watcher
     new Watcher(vm.$data, exp, () => text(node, exp, vm))
   },
   html(node, exp, vm) {
@@ -20,9 +24,7 @@ const compileElementFunctions = {
     model(node, exp, vm)
     // 目前model指令只对具有input事件的input元素
     // view -> model
-    node.addEventListener('input', () => {
-      chainSet(vm.$data, exp, node.value)
-    })
+    node.addEventListener('input', () => chainSet(vm.$data, exp, node.value))
     // model -> view
     new Watcher(vm.$data, exp, () => model(node, exp, vm))
   },
