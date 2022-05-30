@@ -1,7 +1,7 @@
 ## 这是什么
 本项目是一个模仿Vue1.x的项目
 
-[查看：React和Vue的基本思想和原理](/docs/React.vs.Vue.md)
+[<span style="text-decoration: underline;">查看：React和Vue的基本思想和原理</span>](/docs/React.vs.Vue.md)
 
 此 `1.0.0` 版本只是很简单地实现了基于 DOM 模板的单一组件（意味着不支持子组件），主要展示了 **依赖收集** 和 **发布订阅** 在 Vue 中的基本工作方式，而且此版本没有考虑到去除重复收集的依赖
 
