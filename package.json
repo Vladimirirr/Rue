@@ -2,14 +2,25 @@
   "name": "rue",
   "version": "2.0.0",
   "description": "imitating the vue1.x simply for studying",
-  "main": "/src/index.js",
+  "files": ["dist"],
+  "main": "./dist/Rue.umd.js",
+  "module": "./dist/Rue.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite serve --port=3000",
+    "build": "vite build",
+    "test-snabbdom": "vite serve testSnabbdom --port=3001"
   },
   "repository": {
     "type": "git",
     "url": "https://gitee.com/ryzz/rue.git"
   },
   "author": "ryzz",
-  "license": "LGPL-2.1"
+  "license": "LGPL-2.1",
+  "devDependencies": {
+    "vite": "^2.9.9"
+  },
+  "dependencies": {
+    "lodash": "4.17.21",
+    "snabbdom": "3.5.0"
+  }
 }

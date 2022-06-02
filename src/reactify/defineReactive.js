@@ -48,7 +48,7 @@ export function defineReactive(data, key, vm) {
         childOb = observe(newValue)
         dep.notify()
         // updated
-        vm.$lifecycle?.updated.call(vm)
+        // vm.$lifecycle?.updated.call(vm)
       }
     },
   })

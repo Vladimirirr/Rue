@@ -6,11 +6,13 @@ import { parsePath } from '../utils/utils.js'
 import { pushTarget, popTarget } from './Dep.js'
 
 export class Watcher {
-  constructor(data, expression, cb) {
-    // data 依赖数据对象
-    // expression 依赖的值
-    // cb 依赖变化时的行为
-
+  /**
+   * @param {*} data 依赖数据对象
+   * @param {*} expression 依赖的值
+   * @param {*} cb 依赖变化时的行为
+   * @param {*} opts isRenderWatcher, isComputedWatcher
+   */
+  constructor(data, expression, cb, { isRenderWatcher, isComputedWatcher }) {
     // 初始化
     this.data = data
     if (typeof expression === 'function') {

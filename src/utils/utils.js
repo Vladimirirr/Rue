@@ -1,26 +1,19 @@
-import _ from '../lib/underscore.1.13.2.esm.js'
+import {
+  get as _get,
+  set as _set,
+  cloneDeep as _cloneDeep,
+  mapValues as _mapValues,
+} from 'lodash'
 
 /**
- * 链式读取一个对象，使用underscore，它能处理很多错误值
- * 如果传入 _.get 的 keyPath 是一个空数组，返回默认值
+ * 链式读取一个对象
  */
-export const chainGet = (data, keyPath, defaultValue = void 0) =>
-  _.get(data, keyPath.split('.'), defaultValue)
+export const chainGet = _get
 
 /**
  * 链式赋值一个对象
  */
-export const chainSet = (data, keyPath, value) => {
-  const keyPathArray = keyPath.split('.')
-  const targetKey = keyPathArray.pop()
-  var targetValue = null
-  if (keyPathArray.length > 0) {
-    targetValue = _.get(data, keyPathArray, null)
-  } else {
-    targetValue = data
-  }
-  return targetValue ? (targetValue[targetKey] = value) : void 0
-}
+export const chainSet = _set
 
 /**
  * 返回一个能够读取对象特定路径的函数
@@ -32,25 +25,15 @@ export function parsePath(path) {
 }
 
 /**
- * 深拷贝一个对象，不要传入循环引用
+ * 深拷贝一个对象
  */
-export function deepClone(source){
-  const toString = Object.prototype.toString
-  const result = Array.isArray(source) ? [] : {}
-  Object.keys(source).forEach((key) => {
-    const targetKeyValue = source[key]
-    if (typeof targetKeyValue === 'object'){
-      const type = toString.call(targetKeyValue)
-      // 只深拷贝 基本对象 和 数组
-      if (type === '[object Object]' || type === '[object Array]'){
-        result[key] = deepClone(targetKeyValue)
-        return
-      }
-    }
-    result[key] = targetKeyValue
-  })
-  return result
-}
+export const cloneDeep = _cloneDeep
+
+/**
+ * 对组件的methods的this绑定组件自身实例，而不是snabbdom默认的VNode
+ */
+export const bindMethods = (methods, vm) =>
+  _mapValues(methods, (method) => method.bind(vm))
 
 export function setValueWithReactive(target, key, value) {
   // 对于数组利用splice实现添加元素

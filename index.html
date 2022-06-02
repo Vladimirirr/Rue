@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body bgcolor="gray">
+    <div id="app">loading</div>
+    <script type="module">
+      import Rue from '/src/index.js'
+      import Home from '/testComponents/Home.jsx'
+      const app = new Rue({
+        el: '#app', // 传入一个合法且存在的选择器当作挂载点，此元素将**被替换**
+        data: { // 此部分将被深拷贝
+          greeting: 'hi',
+          person: {
+            name: 'nat',
+            age: 20,
+          },
+        },
+        methods: {
+          changeGreeting(e) {
+            // console.log(this, e)
+            this.greeting = this.greeting === 'hi' ? 'hello' : 'hi'
+          },
+        },
+        render: Home, // 组件模板，JSX格式
+        // lifecycle: {
+        //   created(){
+        //     // 初始化完成，数据以及响应式化，即将进行 dom 挂载
+        //     console.log('lifecycle: created')
+        //   },
+        //   mounted(){
+        //     // 元素已经被挂载
+        //     console.log('lifecycle: mounted')
+        //   },
+        //   updated(){
+        //     // 元素已经被更新
+        //     console.log('lifecycle: updated')
+        //   },
+        // },
+      })
+      window.app = app
+    </script>
+  </body>
+</html>
