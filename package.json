@@ -1,7 +1,7 @@
 {
   "name": "rue",
   "version": "2.0.0",
-  "description": "imitating the vue1.x simply for studying",
+  "description": "a front-end framework that mixes Vue2.x with React",
   "files": ["dist"],
   "main": "./dist/Rue.umd.js",
   "module": "./dist/Rue.es.js",
