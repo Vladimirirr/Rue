@@ -2,7 +2,12 @@
 
 本项目是一个混合了 Vue2.x + React 思想的前端框架
 
-Vue2.x 思想：
+基本思想：
+
+1. 每个组件管理着自己的状态和对应的真实 dom
+2. 父组件将代理子组件的 dom
+
+参考 Vue2.x 的思想：
 
 1. 响应式化对象
 2. 组件级别的更新，即每个组件的 render watcher
@@ -11,7 +16,7 @@ Vue2.x 思想：
 5. 侦听器 watch
 6. 组件注册机制
 
-React 思想：
+参考 React 的思想：
 
 1. JSX 模板语法
 2. 使用 CSS-in-JavaScript
