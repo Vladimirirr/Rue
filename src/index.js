@@ -19,6 +19,7 @@ export default class Rue extends baseClass {
     this.data = cloneDeep(opts.data) // 实例的状态数据
     this.methods = bindMethods(opts.methods, this) // 实例的方法
     this.opts = opts // 实例配置
+    this.uid = this.getUid() // 组件唯一标识
 
     // 获取 mountPoint
     {

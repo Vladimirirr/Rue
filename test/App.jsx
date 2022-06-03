@@ -15,7 +15,9 @@ const render = (opts, vm) => {
     <div className="container">
       {isRoot && <p>Welcome to Rue!</p>}
       <div>
+        <div>ToDoListHere</div>
         {/* 目前，对自定义组件要手写 parent 属性 */}
+        {/* 此子组件需要它的父组件帮它插入它的 dom，即代理它的 dom */}
         <TodoList parent={vm} />
       </div>
     </div>

@@ -1,4 +1,5 @@
 import patch from '@/vdom/patchGenerator.js'
+import { getUid } from '@/utils/utils.js'
 
 /**
  * 组件的基类，组件的全部公共方法
@@ -6,6 +7,9 @@ import patch from '@/vdom/patchGenerator.js'
 export default class baseClass {
   patch(...args) {
     return patch(...args)
+  }
+  getUid(){
+    return getUid('componentInstance__')()
   }
   update() {
     // 子类要重写此方法
