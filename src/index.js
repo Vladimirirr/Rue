@@ -35,7 +35,7 @@ export default class Rue extends baseClass {
         data: this.data,
         methods: this.methods,
       }
-      const resultVNode = this.opts?.render?.(passToRender)
+      const resultVNode = this.opts?.render?.(passToRender, this)
       // 返回undefined，将会创建一个默认的空的div
       if (resultVNode === undefined) return createDefaultVNode()
       // 返回null，将会删除这个dom元素
@@ -43,6 +43,11 @@ export default class Rue extends baseClass {
       return resultVNode
     }
     this.rednerWatcher = null
+
+    // 组件依赖关系相关
+    this.children = [] // 全体子组件实例
+    this.namedChildren = new Map() // 命名的子组件实例，命名通过 name 属性
+    this.parent = null // 父组件实例
 
     // 响应式
     observe(this.data, this)

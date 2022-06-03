@@ -1,19 +1,22 @@
 import Rue from '@/index.js'
 import { h } from '@/vdom/h.js'
-import TodoList from './TodoList/index.jsx'
+
+import TodoList from './TodoList/index.jsx' // 导入子组件
 
 const React = {
   // 模拟 React.createElement
   createElement: h,
 }
 
-const render = (opts) => {
+const render = (opts, vm) => {
+  // TODO 定制注入的 h 函数，对自定义组件自动传入 parent 属性
   const isRoot = opts.data?.isRoot
   return (
     <div className="container">
-      { isRoot && <p>Welcome to Rue!</p> }
+      {isRoot && <p>Welcome to Rue!</p>}
       <div>
-        <TodoList />
+        {/* 目前，对自定义组件要手写 parent 属性 */}
+        <TodoList parent={vm} />
       </div>
     </div>
   )
@@ -24,9 +27,6 @@ const App = new Rue({
   data: {
     // 此部分将被深拷贝
     isRoot: true,
-  },
-  components: {
-    'TodoList': TodoList,
   },
   render, // 组件模板，JSX格式
   // lifecycle: {

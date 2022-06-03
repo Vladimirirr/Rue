@@ -1,4 +1,3 @@
-import Rue from '@/index.js'
 import { h } from '@/vdom/h.js'
 
 const React = {
@@ -6,12 +5,11 @@ const React = {
   createElement: h,
 }
 
-
 const render = (opts) => {
   const msg = opts.props?.msg || 'empty'
   const lists = opts.data?.lists || []
   return (
-    <div className='todoListContainer'>
+    <div className="todoListContainer">
       <p>{`message from parent instance: ${msg}`}</p>
       <ol>
         {lists.map((i) => (
@@ -22,12 +20,12 @@ const render = (opts) => {
   )
 }
 
-const TodoList = new Rue({
+const TodoList = { // 类似于 Vue2.x 的选项式 API
   data: {
     lists: [],
   },
   render,
-})
+}
 window.TodoList = TodoList // for debug on console
 
 export default TodoList
