@@ -8,7 +8,7 @@ const React = {
 export default (props) => {
   const msgList = props?.msgList || []
   return (
-    <div className="msgClass">
+    <div>
       <p>
         {msgList.length > 0
           ? `please look ${msgList.length} message${

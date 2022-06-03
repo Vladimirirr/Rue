@@ -9,6 +9,7 @@ Vue2.x 思想：
 3. 选项式 API
 4. 计算属性 computed
 5. 侦听器 watch
+6. 组件注册机制
 
 React 思想：
 

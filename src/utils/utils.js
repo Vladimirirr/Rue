@@ -18,11 +18,7 @@ export const chainSet = _set
 /**
  * 返回一个能够读取对象特定路径的函数
  */
-export function parsePath(path) {
-  return function (val) {
-    return chainGet(val, path)
-  }
-}
+export const parsePath = (path) => (value) => chainGet(value, path)
 
 /**
  * 深拷贝一个对象
@@ -35,7 +31,10 @@ export const cloneDeep = _cloneDeep
 export const bindMethods = (methods, vm) =>
   _mapValues(methods, (method) => method.bind(vm))
 
-export function setValueWithReactive(target, key, value) {
+/**
+ * 响应式赋值一个对象的属性
+ */
+export const setValueWithReactive = (target, key, value) => {
   // 对于数组利用splice实现添加元素
   if (Array.isArray(target)) {
     // 如果splice索引超过数组长度会报错
@@ -61,7 +60,10 @@ export function setValueWithReactive(target, key, value) {
   return value
 }
 
-export function deleteValueWithReactive(target, key) {
+/**
+ * 响应式删除一个对象的属性
+ */
+export const deleteValueWithReactive = (target, key) => {
   // 对于数组用splice方法删除元素
   if (Array.isArray(target)) {
     target.splice(key, 1)

@@ -14,13 +14,22 @@ export default class Rue extends baseClass {
   constructor(opts) {
     super()
     // 配置项相关
-    this.el = document.querySelector(opts.el)
-    this.data = cloneDeep(opts.data)
-    this.methods = bindMethods(opts.methods, this)
-    this.opts = opts
+    this.mountPoint = null // 挂载点，**此元素将被替换**
+    this.el = null // 实例对应的 dom
+    this.data = cloneDeep(opts.data) // 实例的状态数据
+    this.methods = bindMethods(opts.methods, this) // 实例的方法
+    this.opts = opts // 实例配置
+
+    // 获取 mountPoint
+    {
+      const mountPoint = this.opts?.mountPoint
+      if (mountPoint != null) {
+        this.mountPoint = document.querySelector(mountPoint)
+      }
+    }
 
     // 渲染相关
-    this.lastVNode = null
+    this.lastVNode = null // 上一次的 VNode
     this.render = () => {
       const passToRender = {
         data: this.data,
@@ -41,14 +50,16 @@ export default class Rue extends baseClass {
     // 代理数据
     this.proxyData(this.data)
 
-    // 初始化首次渲染
-    this.mount()
+    // 初始化首次渲染，只有存在 mountPoint 才是首次渲染
+    if (this.mountPoint) {
+      this.mount()
+    }
   }
   update() {
     const { render } = this
     if (this.lastVNode === null) {
       // 第一次渲染
-      this.lastVNode = this.el
+      this.lastVNode = this.mountPoint || document.createElement('div')
     }
     const nowVNode = render()
     this.patch(this.lastVNode, nowVNode)

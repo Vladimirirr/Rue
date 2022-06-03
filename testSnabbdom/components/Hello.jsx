@@ -17,7 +17,7 @@ export default (props) => {
     window?.updateComponent?.()
   )
   return (
-    <div className="helloClass">
+    <div>
       <p>hello, my name is { name }</p>
       <div>
         {/* 事件的写法与 JSX 不同 */}
