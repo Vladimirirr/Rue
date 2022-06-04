@@ -1,7 +1,7 @@
 import Rue from '@/index.js'
 import { createEmptyVNode } from '@/utils/vnode.js'
 
-export const buildComponentFromVNode = (componentOptions) => {
+export const buildComponentFromVNode = (componentOptions, data, children) => {
   // 从它的父组件的子组件池拿到对应的组件配置项 并且 实例化它
   const componentInstance = new Rue(componentOptions)
   const componentName = data?.name

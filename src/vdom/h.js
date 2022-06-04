@@ -9,7 +9,7 @@ const h = (tag, data, children) => {
     return jsx(tag, data, children)
   }
   if (typeof tag === 'object') {
-    return buildComponentFromVNode(tag)
+    return buildComponentFromVNode(tag, data, children)
   }
 }
 
