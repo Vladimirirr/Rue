@@ -4,33 +4,33 @@
 
 基本思想：
 
-1. 每个组件管理着自己的状态和对应的真实 dom
-2. 父组件将代理子组件的 dom
+- 每个组件管理着自己的状态和对应的真实 dom
+- 父组件将代理子组件的 dom
 
 参考 Vue2.x 的思想：
 
-1. 响应式化对象
-2. 组件级别的更新，即每个组件的 render watcher
-3. 选项式 API
-4. 计算属性 computed
-5. 侦听器 watch
-6. 组件注册机制
+- 响应式化对象
+- 组件级别的更新，即每个组件的 render watcher
+- 选项式 API
+- 计算属性 computed
+- 侦听器 watch
+- 组件注册机制
 
 参考 React 的思想：
 
-1. JSX 模板语法
-2. 使用 CSS-in-JavaScript
-3. 单向数据流
-4. render props
+- JSX 模板语法
+- 使用 CSS-in-JavaScript
+- 单向数据流
+- render props
 
 高级特性：
 
-1. hooks 而非 mixin 或 HOC 来复用组件逻辑 - pending
-2. portal - pending
-3. 插件机制 - pending
-4. error boundary - pending
-5. suspend - pending
-6. SSR - pending
+- hooks 而非 mixin 或 HOC 来复用组件逻辑 [ ]
+- portal [ ]
+- 插件机制 [ ]
+- error boundary [ ]
+- suspend [ ]
+- SSR [ ]
 
 [<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
 
