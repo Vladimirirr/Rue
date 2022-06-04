@@ -12,16 +12,14 @@
 - 响应式化对象
 - 组件级别的更新，即每个组件的 render watcher，异步的批量合并更新
 - 选项式 API
-- 计算属性 computed
 - 侦听器 watch
-- 组件注册机制
 
 参考 React 的思想：
 
 - JSX 模板语法
 - 使用 CSS-in-JavaScript
 - 单向数据流
-- render props
+- render 函数
 
 高级特性：
 
@@ -32,8 +30,6 @@
 - suspend - pending
 - SSR - pending
 
-[<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
-
 ## 快速开始
 
 1. 克隆本仓库 `git clone ...`
@@ -43,6 +39,10 @@
 ## 教程
 
 pending
+
+## 学习文档
+
+[<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
 
 ## 功能依赖清单
 
