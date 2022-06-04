@@ -6,11 +6,13 @@ const React = {
 }
 
 const render = (opts) => {
-  const msg = opts.props?.msg || 'empty'
   const lists = opts.data?.lists || []
   return (
     <div className="todoListContainer">
-      <p>{`message from parent instance: ${msg}`}</p>
+      <div>
+        <input type="text" placeholder="add a new TODO"/>
+        <button>add</button>
+      </div>
       <ol>
         {lists.map((i) => (
           <li key={i.key}>{i.value}</li>

@@ -4,11 +4,14 @@ import baseClass from './base/baseClass.js'
 // vnode
 import { createEmptyVNode, createDefaultVNode } from './utils/vnode.js'
 
-// 响应式
-import { observe, Watcher } from './reactify/index.js'
+// dom
+import { getAllElementsByNodeType, insertAfter } from './utils/dom.js'
 
 // 其他
 import { cloneDeep, bindMethods } from './utils/utils.js'
+
+// 响应式
+import { observe, Watcher } from './reactify/index.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {
@@ -17,7 +20,7 @@ export default class Rue extends baseClass {
     this.mountPoint = null // 挂载点，**此元素将被替换**
     this.el = null // 实例对应的 dom
     this.data = cloneDeep(opts.data) // 实例的状态数据
-    this.methods = bindMethods(opts.methods, this) // 实例的方法
+    this.methods = bindMethods(opts.methods, this) // 实例的方法，this绑定组件自身实例，而不是snabbdom默认的当前VNode
     this.opts = opts // 实例配置
     this.uid = this.getUid() // 组件唯一标识
 
@@ -54,7 +57,7 @@ export default class Rue extends baseClass {
     observe(this.data, this)
 
     // 代理数据
-    this.proxyData(this.data)
+    this.proxyData()
 
     // 初始化首次渲染，只有存在 mountPoint 才是首次渲染
     if (this.mountPoint) {
@@ -72,6 +75,8 @@ export default class Rue extends baseClass {
     this.lastVNode = nowVNode
     // 每次更新都保持组件自身的el最新
     this.el = this.lastVNode.elm
+    // 代理子组件的 dom
+    this.proxyDom()
   }
   mount() {
     // 挂载组件
@@ -85,7 +90,8 @@ export default class Rue extends baseClass {
   unmount() {
     // 卸载组件
   }
-  proxyData(data) {
+  proxyData() {
+    const data = this.data
     for (const x in data) {
       Object.defineProperty(this, x, {
         get() {
@@ -96,5 +102,18 @@ export default class Rue extends baseClass {
         },
       })
     }
+  }
+  proxyDom() {
+    const comments = getAllElementsByNodeType(this.el, 8)
+    const places = comments
+      .filter((e) => e.nodeValue.includes(this.uidPrefix))
+      .map((e) => ({
+        uid: e.nodeValue,
+        el: e,
+      }))
+    places.forEach(({ uid, el }) => {
+      const target = this.children.find((i) => i.uid === uid)?.el
+      target && insertAfter(target, el)
+    })
   }
 }

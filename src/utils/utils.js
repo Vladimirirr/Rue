@@ -1,9 +1,12 @@
+// 通用工具方法
+
 import {
   get as _get,
   set as _set,
   cloneDeep as _cloneDeep,
   mapValues as _mapValues,
   uniqueId as _uniqueId,
+  flattenDeep as _flattenDeep, // 拍扁成一维数组，返回新的数组
 } from 'lodash'
 
 /**
@@ -27,15 +30,33 @@ export const parsePath = (path) => (value) => chainGet(value, path)
 export const cloneDeep = _cloneDeep
 
 /**
- * 对组件的methods的this绑定组件自身实例，而不是snabbdom默认的VNode
+ * 批量对函数进行bind处理
  */
 export const bindMethods = (methods, vm) =>
   _mapValues(methods, (method) => method.bind(vm))
 
 /**
- * 唯一标识
+ * 唯一标识生成器
  */
 export const getUid = (prefix) => () => _uniqueId(prefix)
+
+/**
+ * 有效数组
+ */
+export const isValidArray = (array) => {
+  if (!Array.isArray(array)) return false
+  if (array.length === 0) return false
+  const flatten = _flattenDeep(array)
+  return !flatten.every((i) => !!i === false) // 全部都是假值，返回 false
+}
+
+/**
+ * 有效对象
+ */
+export const isValidObject = (object) => {
+  if (Object.prototype.toString.call(object) !== '[Object object]') return false
+  return !(Object.keys(object).every((i) => !!object[i]) === false) // 键值对的值都是假值，返回 false
+}
 
 /**
  * 响应式赋值一个对象的属性
