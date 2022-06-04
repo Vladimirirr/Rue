@@ -10,7 +10,7 @@
 参考 Vue2.x 的思想：
 
 - 响应式化对象
-- 组件级别的更新，即每个组件的 render watcher
+- 组件级别的更新，即每个组件的 render watcher，异步的批量合并更新
 - 选项式 API
 - 计算属性 computed
 - 侦听器 watch
