@@ -25,12 +25,12 @@
 
 高级特性：
 
-- hooks 而非 mixin 或 HOC 来复用组件逻辑 [ ]
-- portal [ ]
-- 插件机制 [ ]
-- error boundary [ ]
-- suspend [ ]
-- SSR [ ]
+- hooks 而非 mixin 或 HOC 来复用组件逻辑 - pending
+- portal - pending
+- 插件机制 - pending
+- error boundary - pending
+- suspend - pending
+- SSR - pending
 
 [<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
 
