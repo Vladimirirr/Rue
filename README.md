@@ -36,7 +36,9 @@
 
 ## 快速开始
 
-pending
+1. 克隆本仓库 `git clone ...`
+2. 安装依赖 `npm i`
+3. 本地运行 `npm run dev` 就可以看见默认的 TODO List 案例
 
 ## 教程
 
