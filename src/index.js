@@ -1,11 +1,5 @@
 // 基类
-import baseClass from './base/baseClass.js'
-
-// vnode
-import { createEmptyVNode, createDefaultVNode } from './utils/vnode.js'
-
-// dom
-import { getAllElementsByNodeType, insertAfter } from './utils/dom.js'
+import baseClass from './base/baseClass/index.js'
 
 // 其他
 import { cloneDeep, bindMethods } from './utils/utils.js'
@@ -15,6 +9,12 @@ import { addUpdater } from './scheduler/index.js'
 
 // 响应式
 import { observe, Watcher } from './reactify/index.js'
+
+// 初始化s
+import installRender from './base/initOnRue/installRender.js'
+import installUpdate from './base/initOnRue/installUpdate.js'
+import proxyData from './base/initOnRue/proxyData.js'
+import proxyDom from './base/initOnRue/proxyDom.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {
@@ -36,41 +36,10 @@ export default class Rue extends baseClass {
     }
 
     // 渲染相关
-    this.lastVNode = null // 上一次的 VNode
-    this.rednerWatcher = null // 组件的 render watcher
-    this._render = () => {
-      const passToRender = {
-        data: this.data,
-        methods: this.methods,
-      }
-      const resultVNode = this.opts?.render?.(passToRender, this)
-      // 返回undefined，将会创建一个默认的空的div
-      if (resultVNode === undefined) return createDefaultVNode()
-      // 返回null，将会删除这个dom元素
-      if (resultVNode === null) return createEmptyVNode()
-      return resultVNode
-    }
+    installRender.call(this)
 
     // 更新相关
-    this._update = (isFirstUpdate) => {
-      // 更新组件的方法
-      if (isFirstUpdate) {
-        // 第一次渲染
-        this.lastVNode = document.createElement('div')
-      }
-      const nowVNode = this._render()
-      this.patch(this.lastVNode, nowVNode)
-      this.lastVNode = nowVNode
-      // 每次更新都保持组件自身的el最新，不要更新 VNode.elm 否则导致下次 patch 会出错
-      this.el = this.lastVNode.elm
-      // 代理子组件的 dom
-      this.proxyDom()
-      // 挂载
-      if (isFirstUpdate && this.mountPoint){
-        this.mountPoint.appendChild(this.el)
-      }
-    }
-    this._update.uid = this.uid
+    installUpdate.call(this)
 
     // 组件依赖关系相关
     this.children = [] // 全体子组件实例
@@ -81,7 +50,10 @@ export default class Rue extends baseClass {
     observe(this.data, this)
 
     // 代理数据
-    this.proxyData()
+    proxyData.call(this)
+
+    // 代理 dom
+    this.proxyDom = proxyDom
 
     // 初始化首次渲染，只有存在 mountPoint 才是首次渲染
     if (this.mountPoint) {
@@ -108,31 +80,5 @@ export default class Rue extends baseClass {
   }
   unmount() {
     // 卸载组件
-  }
-  proxyData() {
-    const data = this.data
-    for (const x in data) {
-      Object.defineProperty(this, x, {
-        get() {
-          return data[x]
-        },
-        set(newValue) {
-          data[x] = newValue
-        },
-      })
-    }
-  }
-  proxyDom() {
-    const comments = getAllElementsByNodeType(this.el, 8)
-    const places = comments
-      .filter((e) => e.nodeValue.includes(this.uidPrefix))
-      .map((e) => ({
-        uid: e.nodeValue,
-        el: e,
-      }))
-    places.forEach(({ uid, el }) => {
-      const target = this.children.find((i) => i.uid === uid)?.el
-      target && insertAfter(target, el)
-    })
   }
 }
