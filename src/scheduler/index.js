@@ -14,22 +14,22 @@ var isUpdatersActivated = false
 
 /**
  * 向更新队伍插入新的更新
- * @param {object} rednerWatcher 渲染 watcher
+ * @param {object} updater 组件的更新方法
  * @param {boolean} first 优先级，将通过 unshift 插入而不是 push
  */
-const addUpdater = (rednerWatcher, first) => {
+const addUpdater = (updater, first) => {
   if (isUpdating) {
     console.warn('do NOT add updater when updating is processing.')
     return
   }
-  const foundIndex = queueUpdaters.indexOf(rednerWatcher)
+  const foundIndex = queueUpdaters.findIndex((i) => i.uid === updater.uid)
   if (~foundIndex) {
     // 存在，把原来的移除
     queueUpdaters.splice(foundIndex, 1)
   }
   // push
   const whichAdd = first ? [].unshift : [].push
-  whichAdd.call(queueUpdaters, rednerWatcher)
+  whichAdd.call(queueUpdaters, updater)
   // 一旦是一个新的队伍，就激活此队伍
   if (!isUpdatersActivated) {
     isUpdatersActivated = true
@@ -42,7 +42,7 @@ const clearUpdaters = () => {
     console.warn('can NOT clear updaters when updating is processing.')
     return
   }
-  !isUpdating && queueUpdaters.length === 0
+  !isUpdating && (queueUpdaters.length = 0)
 }
 
 const resetUpdatersStatus = () => (
@@ -56,7 +56,7 @@ const beginUpdaters = () => {
   }
   isUpdating = true
   schedulerEngine(() => queueUpdaters.forEach((i) => i()))
-  schedulerEngine(() => (clearUpdaters(), resetUpdatersStatus()))
+  schedulerEngine(() => (resetUpdatersStatus(), clearUpdaters()))
 }
 
 window.queueUpdaters = queueUpdaters // for debug on console

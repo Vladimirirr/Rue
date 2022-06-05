@@ -37,7 +37,8 @@ export default class Rue extends baseClass {
 
     // 渲染相关
     this.lastVNode = null // 上一次的 VNode
-    this.render = () => {
+    this.rednerWatcher = null // 组件的 render watcher
+    this._render = () => {
       const passToRender = {
         data: this.data,
         methods: this.methods,
@@ -49,7 +50,23 @@ export default class Rue extends baseClass {
       if (resultVNode === null) return createEmptyVNode()
       return resultVNode
     }
-    this.rednerWatcher = null
+
+    // 更新相关
+    this._update = () => {
+      // 更新组件的方法
+      if (this.lastVNode === null) {
+        // 第一次渲染
+        this.lastVNode = this.mountPoint || document.createElement('div')
+      }
+      const nowVNode = this._render()
+      this.patch(this.lastVNode, nowVNode)
+      this.lastVNode = nowVNode
+      // 每次更新都保持组件自身的el最新
+      this.el = this.lastVNode.elm
+      // 代理子组件的 dom
+      this.proxyDom()
+    }
+    this._update.uid = this.uid
 
     // 组件依赖关系相关
     this.children = [] // 全体子组件实例
@@ -72,23 +89,8 @@ export default class Rue extends baseClass {
     if (this.lastVNode === null) {
       this._update()
     } else {
-      addUpdater(this._update.bind(this))
+      addUpdater(this._update)
     }
-  }
-  _update() {
-    // 更新组件的方法
-    const { render } = this
-    if (this.lastVNode === null) {
-      // 第一次渲染
-      this.lastVNode = this.mountPoint || document.createElement('div')
-    }
-    const nowVNode = render()
-    this.patch(this.lastVNode, nowVNode)
-    this.lastVNode = nowVNode
-    // 每次更新都保持组件自身的el最新
-    this.el = this.lastVNode.elm
-    // 代理子组件的 dom
-    this.proxyDom()
   }
   mount() {
     // 挂载组件
