@@ -10,6 +10,9 @@ import { getAllElementsByNodeType, insertAfter } from './utils/dom.js'
 // 其他
 import { cloneDeep, bindMethods } from './utils/utils.js'
 
+// 更新调度
+import { addUpdater } from './scheduler/index.js'
+
 // 响应式
 import { observe, Watcher } from './reactify/index.js'
 
@@ -65,6 +68,15 @@ export default class Rue extends baseClass {
     }
   }
   update() {
+    // 首次渲染将被同步执行
+    if (this.lastVNode === null) {
+      this._update()
+    } else {
+      addUpdater(this._update.bind(this))
+    }
+  }
+  _update() {
+    // 更新组件的方法
     const { render } = this
     if (this.lastVNode === null) {
       // 第一次渲染
