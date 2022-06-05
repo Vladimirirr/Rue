@@ -25,8 +25,14 @@ const render = (opts, vm) => {
       </div>
       <ol style="padding: 0;">
         {lists.map((i) => (
-          <TodoListItem parent={vm} key={i.key} value={i.value} />
+          <li parent={vm} key={i.key} value={i.value}>
+            {i.value}
+          </li>
         ))}
+        {/* exists a bug in loop the components */}
+        {/* {lists.map((i) => (
+          <TodoListItem parent={vm} key={i.key} value={i.value} />
+        ))} */}
       </ol>
     </div>
   )
@@ -45,7 +51,7 @@ const TodoList = {
     addNew() {
       this.lists.push({
         key: Math.random() + '',
-        value: this.inputValue,
+        value: this.inputValue || 'empty todo',
       })
     },
   },

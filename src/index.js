@@ -52,19 +52,23 @@ export default class Rue extends baseClass {
     }
 
     // 更新相关
-    this._update = () => {
+    this._update = (isFirstUpdate) => {
       // 更新组件的方法
-      if (this.lastVNode === null) {
+      if (isFirstUpdate) {
         // 第一次渲染
-        this.lastVNode = this.mountPoint || document.createElement('div')
+        this.lastVNode = document.createElement('div')
       }
       const nowVNode = this._render()
       this.patch(this.lastVNode, nowVNode)
       this.lastVNode = nowVNode
-      // 每次更新都保持组件自身的el最新
+      // 每次更新都保持组件自身的el最新，不要更新 VNode.elm 否则导致下次 patch 会出错
       this.el = this.lastVNode.elm
       // 代理子组件的 dom
       this.proxyDom()
+      // 挂载
+      if (isFirstUpdate && this.mountPoint){
+        this.mountPoint.appendChild(this.el)
+      }
     }
     this._update.uid = this.uid
 
@@ -85,11 +89,12 @@ export default class Rue extends baseClass {
     }
   }
   update() {
+    const isFirstUpdate = this.lastVNode === null
     // 首次渲染将被同步执行
-    if (this.lastVNode === null) {
-      this._update()
+    if (isFirstUpdate) {
+      this._update(isFirstUpdate)
     } else {
-      addUpdater(this._update)
+      addUpdater(() => this._update(isFirstUpdate))
     }
   }
   mount() {
