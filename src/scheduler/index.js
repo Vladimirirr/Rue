@@ -7,7 +7,7 @@ import schedulerEngine from './getSchedulerEngine.js'
 const queueUpdaters = []
 
 // 正在执行更新队伍
-var isUpdating = false
+var isBeginUpdatersCalled = false
 
 // 队伍是否已经被激活
 var isUpdatersActivated = false
@@ -18,10 +18,6 @@ var isUpdatersActivated = false
  * @param {boolean} first 优先级，将通过 unshift 插入而不是 push
  */
 const addUpdater = (updater, first) => {
-  if (isUpdating) {
-    console.warn('do NOT add updater when updating is processing.')
-    return
-  }
   const foundIndex = queueUpdaters.findIndex((i) => i.uid === updater.uid)
   if (~foundIndex) {
     // 存在，把原来的移除
@@ -38,24 +34,27 @@ const addUpdater = (updater, first) => {
 }
 
 const clearUpdaters = () => {
-  if (isUpdating) {
+  if (isBeginUpdatersCalled) {
     console.warn('can NOT clear updaters when updating is processing.')
     return
   }
-  !isUpdating && (queueUpdaters.length = 0)
+  !isBeginUpdatersCalled && (queueUpdaters.length = 0)
 }
 
 const resetUpdatersStatus = () => (
-  (isUpdating = false), (isUpdatersActivated = false)
+  (isBeginUpdatersCalled = false), (isUpdatersActivated = false)
 )
 
 const beginUpdaters = () => {
-  if (isUpdating) {
-    console.warn('can NOT begin updaters when another is processing.')
+  if (isBeginUpdatersCalled) {
+    console.warn('can NOT begin updaters when another is began.')
     return
   }
-  isUpdating = true
-  schedulerEngine(() => queueUpdaters.forEach((i) => i()))
+  isBeginUpdatersCalled = true
+  schedulerEngine(() => {
+    // console.log('scheduler these updaters begin', queueUpdaters.map(i => i.uid))
+    queueUpdaters.forEach((i) => i())
+  })
   schedulerEngine(() => (resetUpdatersStatus(), clearUpdaters()))
 }
 

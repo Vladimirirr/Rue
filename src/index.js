@@ -66,7 +66,9 @@ export default class Rue extends baseClass {
     if (isFirstUpdate) {
       this._update(isFirstUpdate)
     } else {
-      addUpdater(() => this._update(isFirstUpdate))
+      const updater = () => this._update(isFirstUpdate)
+      updater.uid = this._update.uid
+      addUpdater(updater)
     }
   }
   mount() {

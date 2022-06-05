@@ -1,0 +1,7 @@
+.todoListContainer {
+  width: 50vw;
+}
+.betweenLine {
+  display: flex;
+  justify-content: space-between;
+}

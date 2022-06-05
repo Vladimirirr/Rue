@@ -14,7 +14,7 @@ export const resolveData = (tag, data) => {
   const result = {}
   // 特定元素
   if (tag === 'input') {
-    result.attrs = {
+    result.props = {
       type: data.type,
       value: data.value,
       id: data.id,

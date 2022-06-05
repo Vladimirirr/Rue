@@ -1,6 +1,6 @@
 import { h } from '@/vdom/h.js'
 
-import TodoListItem from './components/Item/index.jsx'
+import css from './index.module.css'
 
 const React = {
   // 模拟 React.createElement
@@ -12,9 +12,10 @@ const render = (opts, vm) => {
   const inputValue = opts.data?.inputValue || ''
   const changeInputValue = opts.methods?.changeInputValue || new Function()
   const addNew = opts.methods?.addNew || new Function()
+  const removeItem = opts.methods?.removeItem || new Function()
   return (
-    <div className="todoListContainer" style="margin-top: 20px;">
-      <div>
+    <div className={css.todoListContainer} style="margin-top: 20px;">
+      <div className={css.betweenLine}>
         <input
           type="text"
           placeholder="add a new TODO"
@@ -25,14 +26,17 @@ const render = (opts, vm) => {
       </div>
       <ol style="padding: 0;">
         {lists.map((i) => (
-          <li parent={vm} key={i.key} value={i.value}>
-            {i.value}
+          <li
+            parent={vm}
+            key={i.key}
+            value={i.value}
+            className={css.betweenLine}
+          >
+            <span>{i.value}</span>
+            <button onClick={() => removeItem(i.key)}>del</button>
           </li>
         ))}
-        {/* exists a bug in loop the components */}
-        {/* {lists.map((i) => (
-          <TodoListItem parent={vm} key={i.key} value={i.value} />
-        ))} */}
+        {/* exists a bug in loop the components like the Item in this way of composing components */}
       </ol>
     </div>
   )
@@ -53,6 +57,11 @@ const TodoList = {
         key: Math.random() + '',
         value: this.inputValue || 'empty todo',
       })
+      this.inputValue = ''
+    },
+    removeItem(key) {
+      const index = this.lists.findIndex((i) => i.key === key)
+      this.lists.splice(index, 1)
     },
   },
   render,
