@@ -1,7 +1,7 @@
 // 基类
 import baseClass from './base/baseClass/index.js'
 
-// 其他
+// 方法
 import { cloneDeep, bindMethods } from './utils/utils.js'
 
 // 更新调度
@@ -10,7 +10,7 @@ import { addUpdater } from './scheduler/index.js'
 // 响应式
 import { observe, Watcher } from './reactify/index.js'
 
-// 初始化s
+// 初始化
 import installRender from './base/initOnRue/installRender.js'
 import installUpdate from './base/initOnRue/installUpdate.js'
 import proxyData from './base/initOnRue/proxyData.js'
