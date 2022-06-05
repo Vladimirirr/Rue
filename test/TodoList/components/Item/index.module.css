@@ -1,0 +1,9 @@
+.todoListItemContainer{
+  display: flex;
+  justify-content: space-between;
+}
+.todoListItemContainer .delBtn{
+  background: red;
+  color: white;
+  outline: none;
+}

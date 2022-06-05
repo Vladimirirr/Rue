@@ -1,11 +1,13 @@
 import { h } from '@/vdom/h.js'
 
+import TodoListItem from './components/Item/index.jsx'
+
 const React = {
   // 模拟 React.createElement
   createElement: h,
 }
 
-const render = (opts) => {
+const render = (opts, vm) => {
   const lists = opts.data?.lists || []
   const inputValue = opts.data?.inputValue || ''
   const changeInputValue = opts.methods?.changeInputValue || new Function()
@@ -21,9 +23,9 @@ const render = (opts) => {
         />
         <button onClick={addNew}>add</button>
       </div>
-      <ol>
+      <ol style="padding: 0;">
         {lists.map((i) => (
-          <li key={i.key}>{i.value}</li>
+          <TodoListItem parent={vm} key={i.key} value={i.value} />
         ))}
       </ol>
     </div>

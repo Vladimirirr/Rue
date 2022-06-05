@@ -22,8 +22,8 @@ export default class Rue extends baseClass {
     // 配置项相关
     this.mountPoint = null // 挂载点，**此元素将被替换**
     this.el = null // 实例对应的 dom
-    this.data = cloneDeep(opts.data) // 实例的状态数据
-    this.methods = bindMethods(opts.methods, this) // 实例的方法，this绑定组件自身实例，而不是snabbdom默认的当前VNode
+    this.data = cloneDeep(opts.data || {}) // 实例的状态数据
+    this.methods = bindMethods(opts.methods || {}, this) // 实例的方法，this绑定组件自身实例，而不是snabbdom默认的当前VNode
     this.opts = opts // 实例配置
     this.uid = this.getUid() // 组件唯一标识
 
