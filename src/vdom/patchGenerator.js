@@ -10,11 +10,13 @@ import {
   eventListenersModule, // 支持事件监听，使用 on 键，例如 { on: { click: function } }
 } from 'snabbdom'
 
+import handleComponentVNodeModule from './modules/handleComponentVNodeModule.js'
+
 // 通过传入模块初始化 patch 函数
 const basic = [classModule, propsModule, styleModule, eventListenersModule]
 const preset = {
   basic,
-  full: [...basic, attributesModule, datasetModule],
+  full: [...basic, attributesModule, datasetModule, handleComponentVNodeModule],
 }
 
 export const patchGenerator = (level) => init(preset[level])

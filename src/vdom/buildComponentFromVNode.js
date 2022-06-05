@@ -1,5 +1,5 @@
 import Rue from '@/index.js'
-import { createEmptyVNode } from '@/utils/vnode.js'
+import { h } from './h.js'
 
 export const buildComponentFromVNode = (componentOptions, data, children) => {
   // TODO 处理组件的children
@@ -19,5 +19,6 @@ export const buildComponentFromVNode = (componentOptions, data, children) => {
   }
   // 渲染组件
   componentInstance.mount() // 手动挂载
-  return createEmptyVNode(componentInstance.uid) // 在父组件对应的结构位置上标识此子组件
+  const { uid: c_uid, name: c_name } = componentInstance
+  return h(`rue-component-${c_uid}-${c_name || 'unknown'}`, data, ...children)
 }

@@ -37,6 +37,8 @@ export const resolveData = (tag, data) => {
         result.style = data.style
         break
       case 'string':
+        if (data.style.endsWith(';'))
+          data.style = data.style.substring(0, data.style.length - 1)
         result.style = data.style
           .replace(/\s/g, '')
           .split(';')

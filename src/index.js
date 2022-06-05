@@ -15,6 +15,7 @@ import installRender from './base/initOnRue/installRender.js'
 import installUpdate from './base/initOnRue/installUpdate.js'
 import proxyData from './base/initOnRue/proxyData.js'
 import proxyDom from './base/initOnRue/proxyDom.js'
+import installPatch from './base/initOnRue/installPatch.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {
@@ -40,6 +41,9 @@ export default class Rue extends baseClass {
 
     // 更新相关
     installUpdate.call(this)
+
+    // 挂载相关
+    installPatch.call(this)
 
     // 组件依赖关系相关
     this.children = [] // 全体子组件实例
