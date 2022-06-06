@@ -10,8 +10,6 @@ export default function installUpdate() {
     this.lastVNode = nowVNode
     // 每次更新都保持组件自身的el最新，不要更新 VNode.elm 否则导致下次 patch 会出错
     this.el = this.lastVNode.elm
-    // 代理子组件的 dom
-    this.proxyDom()
     // 挂载
     if (isFirstUpdate && this.mountPoint) {
       this.mountPoint.appendChild(this.el)

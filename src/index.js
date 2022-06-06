@@ -13,9 +13,8 @@ import { observe, Watcher } from './reactify/index.js'
 // 初始化
 import installRender from './base/initOnRue/installRender.js'
 import installUpdate from './base/initOnRue/installUpdate.js'
-import proxyData from './base/initOnRue/proxyData.js'
-import proxyDom from './base/initOnRue/proxyDom.js'
 import installPatch from './base/initOnRue/installPatch.js'
+import proxyData from './base/initOnRue/proxyData.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {
@@ -55,9 +54,6 @@ export default class Rue extends baseClass {
 
     // 代理数据
     proxyData.call(this)
-
-    // 代理 dom
-    this.proxyDom = proxyDom
 
     // 初始化首次渲染，只有存在 mountPoint 才是首次渲染
     if (this.mountPoint) {
