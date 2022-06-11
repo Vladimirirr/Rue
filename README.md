@@ -7,29 +7,25 @@
 基本思想：
 
 - 每个组件管理着自己的状态和对应的真实 dom
-- 父组件将代理子组件的 dom
+- 组件各自的 dom 组合成最终的应用
 
 参考 Vue2.x 的思想：
 
 - 响应式化对象
-- 组件级别的更新，即每个组件的 render watcher，异步的批量合并更新
+- 组件级别的异步批量合并更新，即组件的 render watcher
 - 选项式 API
-- 侦听器 watch
+- 可选的侦听器 watch，由于使用了 render 函数 + JSX 语法的组件编写方式，多数情况下不需要自定义 watch，直接在 render 函数内操作即可
 
 参考 React 的思想：
 
-- JSX 模板语法
-- 使用 CSS-in-JavaScript
+- render 函数 和 JSX 模板语法
 - 单向数据流
-- render 函数
 
 高级特性：
 
 - hooks 而非 mixin 或 HOC 来复用组件逻辑 - pending
 - portal - pending
 - 插件机制 - pending
-- error boundary - pending
-- suspend - pending
 - SSR - pending
 
 ## 快速开始
