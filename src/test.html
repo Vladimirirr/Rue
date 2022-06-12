@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body bgcolor="gray">
+    <div id="app">
+      <span>{{greeting}} - {{fruit}}</span>
+      <p r-text="greeting">default text</p>
+      <button r-html="htmlString" r-on="click:clickHandler">default text</button>
+      <div>
+        <input type="text" r-model="greeting" />
+      </div>
+      <ul>
+        <li>{{person.name}}</li>
+        <li>{{person.age}}</li>
+      </ul>
+      <ul>
+        <li r-text="person.name">default person.name</li>
+        <li r-text="person.age">default person.age</li>
+      </ul>
+    </div>
+    <script type="module">
+      import Rue from './index.js'
+      const app = new Rue({
+        el: '#app', // 传入一个合法且存在的选择器
+        data: { // 此部分将被深拷贝
+          greeting: 'hi',
+          person: {
+            name: 'nat',
+            age: 20,
+          },
+          htmlString: '<b>okay</b>',
+          fruit: 'apple',
+        },
+        methods: {
+          clickHandler(e) {
+            // console.log(this, e)
+            this.greeting = 'clicked'
+          },
+        },
+        lifecycle: {
+          created(){
+            // 初始化完成，数据以及响应式化，即将进行 dom 挂载
+            console.log('lifecycle: created')
+          },
+          mounted(){
+            // 元素已经被挂载
+            console.log('lifecycle: mounted')
+          },
+          updated(){
+            // 元素已经被更新
+            console.log('lifecycle: updated')
+          },
+        },
+      })
+      window.app = app
+    </script>
+  </body>
+</html>

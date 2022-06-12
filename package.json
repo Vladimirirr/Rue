@@ -1,0 +1,15 @@
+{
+  "name": "rue",
+  "version": "1.0.0",
+  "description": "imitating the vue1.x simply for studying",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/ryzz/rue.git"
+  },
+  "author": "ryzz",
+  "license": "Apache-2.0"
+}

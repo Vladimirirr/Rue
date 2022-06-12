@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="vue.2.5.17.beta.0.js"></script>
+  </head>
+  <body bgcolor="gray">
+    <div id="app">
+      <h2>say {{greeting}}</h2>
+      <div><button v-on:click="greeting = 'hello'">change</button></div>
+    </div>
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          greeting: 'hi',
+        },
+      })
+      window.app = app
+    </script>
+  </body>
+</html>
