@@ -17,7 +17,7 @@
     "url": "https://gitee.com/ryzz/rue.git"
   },
   "author": "ryzz",
-  "license": "LGPL-2.1",
+  "license": "Apache-2.0",
   "devDependencies": {
     "vite": "^2.9.9"
   },
