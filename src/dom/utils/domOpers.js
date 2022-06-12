@@ -19,11 +19,7 @@ const updaterElementFunctionsExternal = {
 }
 
 // 只在内部使用的 dom 方法
-const updaterElementFunctionsInternal = {
-  off(node, exp, vm) {
-    // 当组件卸载时，移除事件侦听器
-  },
-}
+const updaterElementFunctionsInternal = {}
 
 export default {
   ...updaterElementFunctionsExternal,

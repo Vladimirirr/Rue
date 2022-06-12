@@ -7,7 +7,7 @@
     <div id="app">
       <span>{{greeting}} - {{fruit}}</span>
       <p r-text="greeting">default text</p>
-      <button r-html="htmlStr" r-on="click:clickFn">default text</button>
+      <button r-html="htmlString" r-on="click:clickHandler">default text</button>
       <div>
         <input type="text" r-model="greeting" />
       </div>
@@ -30,11 +30,11 @@
             name: 'nat',
             age: 20,
           },
-          htmlStr: '<b>okay</b>',
+          htmlString: '<b>okay</b>',
           fruit: 'apple',
         },
         methods: {
-          clickFn(e) {
+          clickHandler(e) {
             // console.log(this, e)
             this.greeting = 'clicked'
           },

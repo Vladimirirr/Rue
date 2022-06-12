@@ -21,11 +21,11 @@ export function defineReactive(data, key, vm) {
   // 当value是对象时（包括数组），value闭包的dep和value.__ob__.dep保存的watchers是一样的，闭包中的dep保证了整个value被覆写时能够触发响应，而childOb保证了$set和$delete方法动态添加或删除value属性时能触发响应，以及value是数组时，数组的变异操作也能触发响应
 
   // 下面用于测试，查看此依赖的闭包的内容
-  window['dep' + key] = {
-    dep,
-    value,
-    childOb,
-  }
+  // window['dep' + key] = {
+  //   dep,
+  //   value,
+  //   childOb,
+  // }
 
   Object.defineProperty(data, key, {
     enumerable: true,
