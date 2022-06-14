@@ -46,6 +46,8 @@ pending
 
 [<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
 
+[<span style="text-decoration: underline;">查看：我的总结 -- Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想.md)
+
 ## 功能依赖清单
 
 1. VNode 和 diff 算法：基于 [snabbdom](https://github.com/snabbdom/snabbdom)
