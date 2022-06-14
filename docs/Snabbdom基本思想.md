@@ -1,6 +1,6 @@
-## Snabbdom 基本原理
+## Snabbdom 基本思想
 
-只是简单的描述一下 snabbdom 的基本原理，而不是细致的分析。
+只是简单的描述一下 snabbdom 的基本思想，而不是细致的分析。
 
 首次 patch 时 snabbdom 会对传入的 VNode 进行 createElm 操作，根据 VNode 生成对应的 dom 并且附加在 VNode 的 elm 属性上（每个子 VNode 都有自己的 elm），然后清空目标 dom 的全部内容再将此 elm 添加进去：
 
