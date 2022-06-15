@@ -1,4 +1,6 @@
-## Snabbdom 基本思想
+# Snabbdom 基本思想
+
+## 工作方式
 
 只是简单的描述一下 snabbdom 的基本思想，而不是细致的分析。
 
@@ -19,3 +21,40 @@
 4. `fns.update.forEach((fn) => fn(oldVNode, newVNode))` 使用工具函数集 fns.update，按照新旧 VNode 的差异来更新 newVNode.elm 的属性
 5. `patchChilren(oldVNode.children, newVNode.children)` 递归比较它们的子节点
 6. `return VNode` 最后返回修改完成的 VNode 元素
+
+## hooks
+
+hook 函数不需要返回值
+
+### 对于单个 VNode 节点
+
+```JavaScript
+init(VNode){
+  // 在 VNode 首次创建它的 dom 时，即在 createElm 函数的最开始被调用
+  debugger
+}
+create(emptyVNode, newVNode){
+  // 在 VNode 首次创建它的 dom 时，即在 createElm 函数已经创建完了此 VNode 的 dom 后被立刻调用
+  debugger
+}
+insert(VNode){
+  // 在 VNode 首次被插入到它的父 dom 或 targetContainer 时，它在 patch 函数中被调用
+  // 在首次调用 patch 函数时，会初始化一个 insertedVnodeQueue 数组，在 createElm 函数中会把带有 hook.insert 的子节点 push 进去，在 patch 函数的结尾会对 insertedVnodeQueue 里面的节点依次执行它们的 insert 钩子
+  debugger
+}
+prepatch(oldVNode, newVNode){
+  // 首次挂载不会触发此方法
+  // 在 patchVnode 函数的最开始被调用，此时的 newVNode.elm 还没有被 oldVNode.elm 赋值
+  debugger
+}
+update(oldVNode, newVNode){
+  // 首次挂载不触发
+  // 在 patchVnode 函数的 fns.update 更新函数集完成后被立刻调用
+  debugger
+}
+postpatch(oldVNode, newVNode){
+  // 首次挂载不触发
+  // 在 patchVnode 函数的最后阶段，此时 newVNode.elm 已经是最新的了
+  debugger
+}
+```

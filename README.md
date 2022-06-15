@@ -6,13 +6,14 @@
 
 基本思想：
 
-- 每个组件管理着自己的状态和对应的真实 dom
-- 父组件将代理子组件的 dom
+- 每个组件管理自己的状态和真实 dom
+- 父组件将代理子组件的 dom，从而组成最终的组件树
 
 参考 Vue2.x 的思想：
 
 - 响应式化对象
-- 组件级别的更新，即每个组件的 render watcher，异步的批量合并更新
+- 组件级别的更新，即每个组件的 render watcher
+- 异步的批量合并更新
 - 选项式 API
 - 侦听器 watch
 
@@ -28,8 +29,6 @@
 - hooks 而非 mixin 或 HOC 来复用组件逻辑 - pending
 - portal - pending
 - 插件机制 - pending
-- error boundary - pending
-- suspend - pending
 - SSR - pending
 
 ## 快速开始
@@ -50,8 +49,8 @@ pending
 
 ## 功能依赖清单
 
-1. VNode 和 diff 算法：基于 [snabbdom](https://github.com/snabbdom/snabbdom)
-2. 全局状态管理：基于 [redux](https://github.com/reduxjs/redux)
+1. VNode 和 diff 算法：[snabbdom](https://github.com/snabbdom/snabbdom)
+2. 工具方法与链式操作：[lodash](https://github.com/lodash/lodash)
 
 ## 我的技术博客
 

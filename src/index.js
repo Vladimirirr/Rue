@@ -13,18 +13,18 @@ import { observe, Watcher } from './reactify/index.js'
 // 初始化
 import installRender from './base/initOnRue/installRender.js'
 import installUpdate from './base/initOnRue/installUpdate.js'
-import installPatch from './base/initOnRue/installPatch.js'
+import installDomProxyer from './base/initOnRue/installProxyDom.js'
 import proxyData from './base/initOnRue/proxyData.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {
     super()
-    // 配置项相关
+    // 配置项初始化相关
     this.mountPoint = null // 挂载点，**此元素将被替换**
     this.el = null // 实例对应的 dom
     this.data = cloneDeep(opts.data || {}) // 实例的状态数据
     this.methods = bindMethods(opts.methods || {}, this) // 实例的方法，this绑定组件自身实例，而不是snabbdom默认的当前VNode
-    this.opts = opts // 实例配置
+    this.opts = opts // 保存实例配置
     this.uid = this.getUid() // 组件唯一标识
 
     // 获取 mountPoint
@@ -41,8 +41,8 @@ export default class Rue extends baseClass {
     // 更新相关
     installUpdate.call(this)
 
-    // 挂载相关
-    installPatch.call(this)
+    // 挂载子组件相关
+    installDomProxyer.call(this)
 
     // 组件依赖关系相关
     this.children = [] // 全体子组件实例
@@ -78,7 +78,7 @@ export default class Rue extends baseClass {
     if (!render) throw new Error(`no render specified for ${name || 'unknown'}`)
     const update = this.update.bind(this)
     // 创建组件重新渲染的 watcher
-    this.rednerWatcher = new Watcher(this.data, update, update, 1)
+    this.renderWatcher = new Watcher(this.data, update, update, 1)
   }
   unmount() {
     // 卸载组件
