@@ -1,4 +1,3 @@
-import Rue from '@/index.js'
 import { h } from '@/vdom/h.js'
 
 import TodoList from './TodoList/index.jsx' // 导入子组件
@@ -26,7 +25,7 @@ const render = (opts, vm) => {
   )
 }
 
-const App = new Rue({
+const App = {
   mountPoint: '#app', // 传入一个合法且存在的选择器当作挂载点，此元素将**被替换**
   data: {
     // 此部分将被深拷贝
@@ -47,7 +46,7 @@ const App = new Rue({
   //     console.log('lifecycle: updated')
   //   },
   // },
-})
+}
 window.App = App // for debug on console
 
 export default App

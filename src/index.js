@@ -16,6 +16,9 @@ import installUpdate from './base/initOnRue/installUpdate.js'
 import installDomProxyer from './base/initOnRue/installProxyDom.js'
 import proxyData from './base/initOnRue/proxyData.js'
 
+// 组件 uid
+var uid = 0
+
 export default class Rue extends baseClass {
   constructor(opts) {
     super()
@@ -24,8 +27,8 @@ export default class Rue extends baseClass {
     this.el = null // 实例对应的 dom
     this.data = cloneDeep(opts.data || {}) // 实例的状态数据
     this.methods = bindMethods(opts.methods || {}, this) // 实例的方法，this绑定组件自身实例，而不是snabbdom默认的当前VNode
+    this.uid = uid++ // 组件唯一标识
     this.opts = opts // 保存实例配置
-    this.uid = this.getUid() // 组件唯一标识
 
     // 获取 mountPoint
     {

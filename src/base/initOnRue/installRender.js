@@ -9,7 +9,7 @@ export default function installRender() {
       data: this.data,
       methods: this.methods,
     }
-    const resultVNode = this.opts?.render?.(passToRender, this)
+    const resultVNode = this.opts?.render?.call(this, passToRender, this)
     // 返回undefined，将会创建一个默认的空的div
     if (resultVNode === undefined) return createDefaultVNode()
     // 返回null，将会返回一个注释节点以实现删除此dom元素

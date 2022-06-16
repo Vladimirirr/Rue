@@ -2,7 +2,18 @@
 
 import { h } from 'snabbdom'
 
+import { instancePrefix } from '@/constants/prefix.js'
+
 export const createEmptyVNode = (comment) => h('!', null, `${comment}`) // 注释节点
+
+export const createPlaceVNode = (comment, props = {}) =>
+  h(
+    '!',
+    {
+      [`${instancePrefix}:props`]: props,
+    },
+    `${comment}`
+  ) // 坑位节点
 
 export const createDefaultVNode = () => h('div') // 默认节点，空的 div
 

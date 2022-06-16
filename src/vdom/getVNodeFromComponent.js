@@ -1,33 +1,29 @@
-import Rue from '@/index.js'
-import { createEmptyVNode } from '@/utils/vnode.js'
+import initComponentOptions from './initComponentOptions.js'
+import buildComponent from './buildComponent.js'
+import getPlace from './getPlace.js'
 
-// 根据传入的配置项实例化一个组件
-const buildComponent = (componentOptions, data, children) => {
-  // TODO process children
-  const componentInstance = new Rue(componentOptions)
-  const componentName = data?.name
-  const componentParent = data?.parent
-  {
-    // 组件的 父 -> 子 依赖关系构建
-    componentParent.children.push(componentInstance)
-    if (componentName)
-      componentParent.childrenNamed.set(componentName, componentInstance)
+// 返回自定义组件的 VNode
+const getVNodeFromComponent = (tag, data, children) => {
+  const parent = data?.parent
+  if (!parent)
+    throw new TypeError(
+      `a parent must be passed to a child when creating a component at ${
+        tag.name || 'unknown'
+      }`
+    )
+  // 初始化 和 格式化
+  initComponentOptions(tag)
+  const uid = tag.uid
+  const found = parent.children.find((i) => i.uid === uid)
+  // 是否已经存在
+  if (found) {
+    // 最新的坑位的 data 和 children 可能不一样，就会导致此组件被更新
+    return getPlace(found)
+  } else {
+    // 获取坑位
+    const place = buildComponent(tag, data, children)
+    return place
   }
-  {
-    // 组件的 子 -> 父 依赖关系构建
-    componentInstance.parent = componentParent
-  }
-  // 渲染组件
-  componentInstance.mount() // 手动挂载
-  const { placePrefix: c_placePrefix, uid: c_uid, name: c_name } = componentInstance
-  data.hook = {
-    prepatch(oldVNode){
-      
-    }
-  }
-  return createEmptyVNode(`${c_placePrefix}:${c_uid}:${c_name || 'unknown'}`)
 }
 
-export default () => {
-
-}
+export default getVNodeFromComponent
