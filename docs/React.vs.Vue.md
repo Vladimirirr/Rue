@@ -231,4 +231,19 @@ function anonymous() {
 
 每个 Vue 组件是一个配置对象，这个对象描述了组件的状态（数据对象）、方法、渲染函数、计算属性、生命周期、等等，组件实例首次调用渲染函数的时候，会将渲染函数（Template 模板）使用到的数据都收集起来并且监听它们的改变，渲染函数返回的 VNode 树在首次渲染时被生成平台渲染的结果，并且将其挂载到组件自身属性 `$el` 上，对于 Web 平台就是 DOM 结构，之后，依赖的数据改变了会导致组件重新调用渲染函数，新旧 VNode 树进行 diff 算法对比，形成 patch，再应用到 `$el` 上，使得组件的 `$el` 每次都是最新的，这也意味着 Vue2.x 的更新颗粒度是各自的组件级别的，而非 React 的递归发生改变的组件的全部子组件。
 
+Vue 渲染一个组件树的流程：
+
+1. 初始化组件实例
+2. 执行`new Watcher(vm, updateComponent, noop, function before(){})`，此 watcher 就是渲染 watcher
+3. 在 watcher 初始化的`value = this.getter.call(vm, vm)`阶段将执行 updateComponent 函数，即执行了`vm._update(vm._render())`
+4. `vm._render()`返回此组件的 VNode 树，对于组件下的子组件执行`createElement(componentOptions, data, children)`，且进入 createComponent 函数，在这里将执行组件的实例化（回到了步骤`1`），将实例化的子组件 push 到父组件的 chilren 属性里，且安装对应的 snabbdom 的钩子（init、prepatch、insert 和 destroy），最终返回`new VNode('vue-component-{uid}-{name}', data, children)`，此 VNode 有一个 componentInstance 引用了对应的组件实例
+5. 接下来继续执行 updateComponent 的`vm._update(vm._render())`，进入了 update 函数
+6. 首次 update，执行`patch(vm.$el, VNode)`，由于是首次执行，vm.$el 为空，将执行 createElm 函数，按照 VNode 创建对应的 dom
+7. 在 createElm 会执行 createChildren 创建它的子 VNode
+8. 如果遇到了自定义组件会执行 createComponent 函数，把组件实例上的 $el 赋值给此自定义组件的 VNode 的 el，且将此 el 使用`appendChild`插入到父组件的 el
+9. 如此，自定义组件的 el 就被插入到父组件的 el
+10. 如果数据发生了变化，执行了新的`vm._update(vm._render())`，在 render 时候，会去父组件的 children 属性里寻找是否已经存在了此组件，存在的话直接使用此组件实例的 render 函数得到对应的 VNode
+11. 接下来还是 update 操作，在进行 patchVNode 自定义组件时，会执行它的 prepatch 钩子，此钩子执行了 updateChildComponent，将新 VNode 的 props、listeners、attrs 和 children 赋值给组件实例，如果值不一样，自然而然就触发了子组件的 update，子组件的更新就被执行
+12. 如此往复
+
 当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么这个子组件只需要返回空的注释节点即可`document.createComment('')`，而这个返回空的注释节点的操作 Vue2.x 的 `v-if` 指令已经帮组件实现了。
