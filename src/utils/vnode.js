@@ -2,7 +2,9 @@
 
 import { h } from 'snabbdom'
 
-export const createEmptyVNode = (comment) => h('!', null, `${comment}`) // 注释节点
+export const createEmptyVNode = (comment = '') => h('!', null, `${comment}`) // 注释节点
+
+export const createPlaceVNode = (comment, data) => h('!', data, `${comment}`) // 坑位节点
 
 export const createDefaultVNode = () => h('div') // 默认节点，空的 div
 
@@ -37,6 +39,8 @@ export const resolveData = (tag, data) => {
         result.style = data.style
         break
       case 'string':
+        if (data.style.endsWith(';'))
+          data.style = data.style.substring(0, data.style.length - 1)
         result.style = data.style
           .replace(/\s/g, '')
           .split(';')

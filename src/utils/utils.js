@@ -5,7 +5,6 @@ import {
   set as _set,
   cloneDeep as _cloneDeep,
   mapValues as _mapValues,
-  uniqueId as _uniqueId,
   flattenDeep as _flattenDeep, // 拍扁成一维数组，返回新的数组
 } from 'lodash'
 
@@ -34,11 +33,6 @@ export const cloneDeep = _cloneDeep
  */
 export const bindMethods = (methods, vm) =>
   _mapValues(methods, (method) => method.bind(vm))
-
-/**
- * 唯一标识生成器
- */
-export const getUid = (prefix) => () => _uniqueId(prefix)
 
 /**
  * 有效数组

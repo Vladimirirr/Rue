@@ -1,9 +1,6 @@
-var uid = 0 // 唯一标识
-
 export class Dep {
   constructor() {
     this.subs = [] // 订阅者，观察者
-    this.id = uid++
   }
   depend() {
     if (Dep.target) {

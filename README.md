@@ -6,13 +6,14 @@
 
 基本思想：
 
-- 每个组件管理着自己的状态和对应的真实 dom
-- 组件各自的 dom 组合成最终的应用
+- 每个组件管理自己的状态和真实 dom
+- 父组件将代理子组件的 dom，从而组成最终的组件树
 
 参考 Vue2.x 的思想：
 
 - 响应式化对象
-- 组件级别的异步批量合并更新，即组件的 render watcher
+- 组件级别的更新，即每个组件的 render watcher
+- 异步的批量合并更新
 - 选项式 API
 - 可选的侦听器 watch，由于使用了 render 函数 + JSX 语法的组件编写方式，多数情况下不需要自定义 watch，直接在 render 函数内操作即可
 
@@ -40,12 +41,16 @@ pending
 
 ## 学习文档
 
-[<span style="text-decoration: underline;">查看：我的总结 -- React 和 Vue2.x 的基本思想和原理</span>](/docs/React.vs.Vue.md)
+[<span style="text-decoration: underline;">查看：React 和 Vue2.x 的基本思想</span>](/docs/React.vs.Vue.md)
+
+[<span style="text-decoration: underline;">查看：Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想.md)
+
+[<span style="text-decoration: underline;">查看：Vue2.x 组件树构建的基本流程</span>](/docs/Vue组件树构建的流程.md)
 
 ## 功能依赖清单
 
-1. VNode 和 diff 算法：基于 [snabbdom](https://github.com/snabbdom/snabbdom)
-2. 全局状态管理：基于 [redux](https://github.com/reduxjs/redux)
+1. VNode 和 diff 算法：[snabbdom](https://github.com/snabbdom/snabbdom)
+2. 工具方法与链式操作：[lodash](https://github.com/lodash/lodash)
 
 ## 我的技术博客
 
