@@ -20,10 +20,10 @@ export const getAllElementsByNodeType = (container, nodeType) => {
 export const insertAfter = (target, where) => {
   // 把 target 插入到 where 同级的后面
   const parent = where.parentElement
-  if (parent.lastChild === where){
+  if (parent.lastChild === null){ // 如果父节点是空，直接插入
     parent.appendChild(target)
   }else{
-    // insertBefore(nodeToInsert, insertNodeBeforeThisNode)
+    // insertBefore(nodeToInsert, insertNodeBeforeThisNode) // 如果insertNodeBeforeThisNode是null将插入到父节点的末尾
     parent.insertBefore(target, target.nextSibling)
   }
 }

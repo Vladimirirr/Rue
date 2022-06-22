@@ -1,4 +1,6 @@
-import { createEmptyVNode, createDefaultVNode } from '@/utils/vnode.js'
+import { createEmptyVNode } from '@/utils/vnode.js'
+import { h } from '@/vdom/h.js'
+import { isVNode } from '@/constants/vnode.js'
 
 export default function installRender() {
   this.lastVNode = null // 上一次的 VNode
@@ -10,10 +12,14 @@ export default function installRender() {
       methods: this.methods,
     }
     const resultVNode = this.opts?.render?.call(this, passToRender, this)
-    // 返回undefined，将会创建一个默认的空的div
-    if (resultVNode === undefined) return createDefaultVNode()
-    // 返回null，将会返回一个注释节点以实现删除此dom元素
-    if (resultVNode === null) return createEmptyVNode()
-    return resultVNode
+    // 返回null、undefined和false，将返回一个注释节点以实现删除此dom元素
+    if (resultVNode == null || resultVNode === false) return createEmptyVNode()
+    if (resultVNode[isVNode]) {
+      // 合法的VNode
+      return resultVNode
+    } else {
+      // 其他类型都强制类型转换成字符串
+      return h('span', {}, resultVNode + '')
+    }
   }
 }

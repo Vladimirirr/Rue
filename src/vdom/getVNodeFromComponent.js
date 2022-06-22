@@ -11,18 +11,17 @@ const getVNodeFromComponent = (tag, data, children) => {
         tag.name || 'unknown'
       }`
     )
-  // 初始化 和 格式化
+  // 初始化 和 格式化 组件配置对象
   initComponentOptions(tag)
   const uid = tag.uid
   const found = parent.children.find((i) => i.uid === uid)
   // 是否已经存在
   if (found) {
-    // 最新的坑位的 data 和 children 可能不一样，就会导致此组件被更新
     return getPlace(found)
   } else {
-    // 获取坑位
-    const place = buildComponent(tag, data, children)
-    return place
+    // 获取组件实例
+    const instance = buildComponent(tag, data, children)
+    return getPlace(instance)
   }
 }
 

@@ -19,12 +19,11 @@ export default function installUpdate() {
     }
     // 挂载（首次渲染且存在挂载点时）
     if (isFirstUpdate && this.mountPoint) {
-      this.mountPoint.appendChild(this.el)
+      this.mountPoint.parentElement.replaceChild(this.el, this.mountPoint)
     }
     // 首次挂载时要代理子组件
     if (isFirstUpdate) {
       this.proxyDom()
     }
   }
-  this._update.uid = this.uid // 给 update 函数一个组件的 uid
 }

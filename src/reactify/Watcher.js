@@ -10,9 +10,8 @@ export class Watcher {
    * @param {*} data 依赖数据对象
    * @param {*} expression 依赖的值
    * @param {*} cb 依赖变化时的行为
-   * @param {*} opts isRenderWatcher, isComputedWatcher
    */
-  constructor(data, expression, cb, { isRenderWatcher, isComputedWatcher }) {
+  constructor(data, expression, cb) {
     // 初始化
     this.data = data
     if (typeof expression === 'function') {
@@ -28,7 +27,7 @@ export class Watcher {
   get({ init }) {
     // 只在初始化 watcher 的时候收集依赖
     init && pushTarget(this)
-    const value = this.getter(this.data) // 触发依赖收集
+    const value = this.getter(this.data) // 获取最新的值
     init && popTarget(this)
     return value
   }
@@ -38,7 +37,7 @@ export class Watcher {
       const oldValue = this.value
       const newValue = value
       this.value = newValue
-      this.cb.call(this.data, oldValue, newValue)
+      this?.cb?.call(this.data, oldValue, newValue)
     }
   }
 }

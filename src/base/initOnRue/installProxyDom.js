@@ -12,13 +12,14 @@ export default function installProxyDom() {
     const places = comments
       .filter((e) => e.nodeValue.includes(this.placePrefix))
       .map((e) => ({
-        uid: getUidFromPlace(e.nodeValue),
-        el: e,
+        uid: getUidFromPlace(e.nodeValue), // 坑位代表的组件的uid
+        placeEl: e, // 坑位dom
       }))
     // 进行代理，把坑位替换成对应的组件的el
-    places.forEach(({ uid, el }) => {
-      const target = this.children.find((i) => i.uid === uid)?.el
-      target && insertAfter(target, el)
+    places.forEach(({ uid, placeEl }) => {
+      // 坑位的uid是字符串，而组件的uid是数字，此处使用宽松比较，而非严格比较
+      const target = this.children.find((i) => i.uid == uid)?.el // 找到对应的组件
+      target && insertAfter(target, placeEl)
     })
   }
   this.proxyDom = proxyDom

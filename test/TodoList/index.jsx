@@ -8,6 +8,7 @@ const React = {
 }
 
 const render = (opts, vm) => {
+  console.log('TodoList render')
   const lists = opts.data?.lists || []
   const inputValue = opts.data?.inputValue || ''
   const changeInputValue = opts.methods?.changeInputValue || new Function()
@@ -44,6 +45,7 @@ const render = (opts, vm) => {
 
 const TodoList = {
   // 类似于 Vue2.x 的选项式 API
+  name: 'TodoList',
   data: {
     lists: [],
     inputValue: '',
