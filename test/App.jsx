@@ -1,11 +1,4 @@
-import { h } from '@/vdom/h.js'
-
 import TodoList from './TodoList/index.jsx' // 导入子组件
-
-const React = {
-  // 模拟 React.createElement
-  createElement: h,
-}
 
 const render = (opts, vm) => {
   // TODO 定制注入的 h 函数，对自定义组件自动传入 parent 属性

@@ -26,6 +26,7 @@
 
 - hooks 而非 mixin 或 HOC 来复用组件逻辑 - pending
 - portal - pending
+- fragment - pending
 - 插件机制 - pending
 - SSR - pending
 

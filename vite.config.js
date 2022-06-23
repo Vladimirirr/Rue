@@ -8,9 +8,8 @@ module.exports = defineConfig({
     },
   },
   esbuild: {
-    // 存疑：为什么有时候生效有时候不行
-    // jsxFactory: 'jsx',
-    // jsxInject: `import { jsx } from 'snabbdom'`,
+    jsxFactory: 'h',
+    jsxInject: `import { h } from '@/vdom/h.js'`,
   },
   build: {
     lib: {

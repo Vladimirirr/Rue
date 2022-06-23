@@ -1,11 +1,4 @@
-import { h } from '@/vdom/h.js'
-
 import css from './index.module.css'
-
-const React = {
-  // 模拟 React.createElement
-  createElement: h,
-}
 
 const render = (opts, vm) => {
   console.log('TodoList render')
