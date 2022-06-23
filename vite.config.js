@@ -16,17 +16,9 @@ module.exports = defineConfig({
       entry: path.resolve(__dirname, './src/index.js'),
       name: 'Rue',
       fileName: 'Rue',
+      // umd格式：使用script方式直接引入，已经被压缩
+      // es格式：打包工具（比如webpack、vite）使用，没有被压缩
       formats: ['umd', 'es'],
     },
-    // rollupOptions: {
-    //   // 外部依赖不要打包
-    //   external: ['vue'],
-    //   output: {
-    //     // 当使用 UMD 或 IIFE 时候，外部依赖给一个全局名字
-    //     globals: {
-    //       vue: 'Vue',
-    //     },
-    //   },
-    // },
   },
 })
