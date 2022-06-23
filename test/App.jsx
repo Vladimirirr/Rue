@@ -16,7 +16,7 @@ const render = (opts, vm) => {
       {isRoot && <p>Welcome to Rue!</p>}
       <p>
         <button onClick={() => (opts.data.isRoot = !isRoot)}>
-          hide welcome tip
+          {isRoot ? 'hide' : 'show'} welcome tip
         </button>
       </p>
       <div>
