@@ -2,25 +2,42 @@
 
 ## 工作方式
 
-只是简单的描述一下 snabbdom 的基本思想，而不是细致的分析。
+只是简单描述一下 snabbdom 的基本思想，而不是细致的分析。
 
-首次 patch 时 snabbdom 会对传入的 VNode 进行 createElm 操作，根据 VNode 生成对应的 dom 并且附加在 VNode 的 elm 属性上（每个子 VNode 都有自己的 elm），然后清空目标 dom 的全部内容再将此 elm 添加进去：
+### 首次 patch
 
-1. `patch(targetContainer: HTMLElement, VNode)` 首次 patch 传入目标 dom 和初始的 VNode
-2. `createElm(VNode)` 对着 VNode 创建对应的 dom
-3. `VNode.elm = document.createElement(VNode.tag)` 根据 VNode 的 tag 属性创建对应的 dom 元素
-4. `fns.create.forEach((fn) => fn(emptyVNode, VNode))` 使用工具函数集 fns.create，以空 VNode 作为参照物，按照 VNode 来创建 VNode.elm 的属性（比如：attributes、className、style、eventListeners、等等，下同）
-5. `VNode.children.forEach((subVNode) => VNode.elm.appendChild(createElm(subVNode)))` 递归它的全部子节点，调用 createElm 创建它们的 dom 元素
-6. `return VNode` 最后返回创建完成的 VNode 元素
+1. 首次 patch 时，传入的 oldVNode 是目标 dom 元素，即`patch(targetElm: HTMLElement, VNode)`，它被替换成对应的 VNode`{ sel: getSel(oldVNode), data: {}, children: [], elm: oldVNode, key: undefined, text: undefined }`
+2. 比较新旧 VNode 是否为相同的节点类型，即`isSameNode(oldVNode, newVNode) => isSameKey && isSameIs && isSameSel`
+3. 如果相同，进入`patchVNode(oldVNode, newVNode)`
+   1. 参见`更新 patch`的`patchVNode`方法
+4. 如果不同，按照 newVNode 创建对应的 dom 元素，挂载在`newVNode.elm`上
+   1. 保存原始目标元素`oldVNode.elm`为`targetElm`，且得到它的父元素`parentElm`
+   2. 进入`createElm(newVNode)`，对着 newVNode 创建对应的 dom
+   3. `newVNode.elm = document.createElement(newVNode.tag)` 根据 newVNode 的 sel 创建对应的 dom 元素，即`document.createElement(sel)`
+   4. `create.forEach((fn) => fn(emptyVNode, newVNode))` 使用工具函数集 create，以空 VNode 作为参照物，按照 newVNode 来创建 newVNode.elm 的属性（比如：className、attributes、style、eventListeners、等等，下同）
+   5. `newVNode.children.forEach((childVNode) => VNode.elm.appendChild(createElm(childVNode)))` 对它的子节点再执行 createElm
+   6. `return newVNode.elm` 最终返回创建完成的 dom 元素
+   7. 替换目标元素`parentElm.replaceChild(targetElm, newVNode.elm)`
 
-后续每次更新时都会传入 oldVNode 和 newVNode 到 patch：
+注释：
 
-1. `patch(oldVNode, newVNode)` 新旧 VNode 进行对比，将差异反应到 oldVNode.elm 这个 dom 元素上
-2. `newVNode.elm = oldVNode.elm` 把当前待更新的 dom 赋值给 newVNode，接下来按照 newVNode 来对此 elm 进行更新
-3. `patchVNode(oldVNode, newVNode)` 依次比较新旧 VNode 的各种属性，这个过程就叫做 patch
-4. `fns.update.forEach((fn) => fn(oldVNode, newVNode))` 使用工具函数集 fns.update，按照新旧 VNode 的差异来更新 newVNode.elm 的属性
-5. `patchChilren(oldVNode.children, newVNode.children)` 递归比较它们的子节点
-6. `return VNode` 最后返回修改完成的 VNode 元素
+1. getSel 函数将得到 targetElm 的 tagName、className 和 id，将它们组合成对应的 CSS 选择器
+2. emptyVNode 即`{ sel: '', data: {}, children: [], elm: undefined, key: undefined, text: undefined }`
+3. `const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule, eventListenersModule])` 对应的 create 函数集就是 `[updateClass, updateProps, updateAttrs, updateDataset, updateStyle, updateEventListeners]`
+
+### 更新 patch
+
+1. `patch(oldVNode, newVNode)` 对新旧 VNode 进行 patch
+2. `patchVNode(oldVNode, newVNode)` 比较新旧 VNode，将不同的地方更新，最终使得新旧 VNode 相同，这个过程就叫做 patch
+3. `newVNode.elm = oldVNode.elm` 把当前待更新的 dom 赋值给 newVNode，接下来按照 newVNode 来对此 elm 进行更新
+4. `update.forEach((fn) => fn(oldVNode, newVNode))` 使用工具函数集 `update`，按照新旧 VNode 的差异来更新 newVNode.elm，**只更新此 elm 元素本身的属性，不更新它的子元素**
+5. `updateChilren(parentElm = newVNode.elm, oldVNode.children, newVNode.children)` 处理它们的子节点，对需要比较的子节点继续执行 patchVNode
+6. patchVNode 函数无返回值
+7. patch 函数返回更新完成的 newVNode
+
+注释：
+
+1. 工具函数集 update 和 create 相同
 
 ## hooks
 
@@ -38,7 +55,7 @@ create(emptyVNode, newVNode){
   debugger
 }
 insert(VNode){
-  // 在 VNode 首次被插入到它的父 dom 或 targetContainer 时，它在 patch 函数中被调用
+  // 在 VNode 首次被插入到它的父 dom 或 targetElm 时，它在 patch 函数中被调用
   // 在首次调用 patch 函数时，会初始化一个 insertedVnodeQueue 数组，在 createElm 函数中会把带有 hook.insert 的子节点 push 进去，在 patch 函数的结尾会对 insertedVnodeQueue 里面的节点依次执行它们的 insert 钩子
   debugger
 }
