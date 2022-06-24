@@ -5,24 +5,36 @@
     <script src="vue.2.5.17.beta.0.js"></script>
   </head>
   <body bgcolor="gray">
-    <div id="app">
-      <h2>say {{greeting}}</h2>
-      <div><button v-on:click="greeting = 'hello'">change</button></div>
-      <Hello />
-    </div>
+    <script type="text/html" id="AppTemplate">
+      <div>
+        <h2 class="greetingContainer">say {{greeting}}</h2>
+        <div><button v-on:click="greeting = 'hello'">change</button></div>
+        <Hello />
+        <Hello />
+      </div>
+    </script>
+    <div id="app"></div>
     <script>
-      var app = new Vue({
+      debugger
+      var App = new Vue({
         el: '#app',
+        template: '#AppTemplate',
         data: {
           greeting: 'hi',
         },
         components: {
           Hello: {
-            template: `<p>i am Hello component</p>`,
+            template: `<p>I am Hello component, click <button @click="add">me</button> to add count and the current value is {{count}}.</p>`,
+            data: () => ({ count: 0 }),
+            methods: {
+              add() {
+                this.count++
+              },
+            },
           },
         },
       })
-      window.app = app
+      window.App = App
     </script>
   </body>
 </html>

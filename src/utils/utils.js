@@ -19,6 +19,11 @@ export const chainGet = _get
 export const chainSet = _set
 
 /**
+ * 空操作
+ */
+export const noop = () => {}
+
+/**
  * 返回一个能够读取对象特定路径的函数
  */
 export const parsePath = (path) => (value) => chainGet(value, path)

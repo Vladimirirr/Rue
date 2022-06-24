@@ -17,7 +17,7 @@ import installDomProxyer from './base/initOnRue/installProxyDom.js'
 import proxyData from './base/initOnRue/proxyData.js'
 
 // 其他
-import { noop } from 'lodash'
+import { noop } from './utils/utils.js'
 
 export default class Rue extends baseClass {
   constructor(opts) {

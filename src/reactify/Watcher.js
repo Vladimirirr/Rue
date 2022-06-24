@@ -26,6 +26,7 @@ export class Watcher {
   }
   get({ init }) {
     // 只在初始化 watcher 的时候收集依赖
+    // TODO 存在问题，如果一个依赖根据条件真假在render读取会导致无法响应式
     init && pushTarget(this)
     const value = this.getter(this.data) // 获取最新的值
     init && popTarget(this)
