@@ -6,23 +6,23 @@
 
 组件的渲染函数`render`根据组件当前状态`state`得出组件最新的视图`view`。
 
-渲染函数得出的视图是 VNode 树结构，它与平台无关，每次更新都会生成一颗最新的 VNode 树，再照着新树修改旧树，最终旧树与新树相同，此过程就是 patch。而 patch 过程由各自的平台渲染器（以 React 举例，React 在 Web 平台的渲染器是 ReactDOM，在移动平台的渲染器是 ReactNative）实现。
+渲染函数得出的视图是 VNode 树结构，它与平台无关，每次更新都会生成一颗最新的 VNode 树，再照着新树修改旧树，最终旧树与新树相同，此过程就是 patch。而 patch 过程由各自的平台渲染器（以 React 举例，React 在 Web 平台的渲染器是 ReactDOM，在移动平台的渲染器是 ReactNative，在服务端平台的渲染器是 ReactServer）实现。
 
-一个组件就是封装了结构`VNode`、行为`JavaScript`和样式`CSS`的组件实例，由`JavaScript`维持着组件当前的状态，且控制着组件当前的结构和样式。
+一个组件就是封装了结构`VNode`、行为`JavaScript`和样式`CSS`的对象或函数，由`JavaScript`维持着组件当前的状态并控制着组件当前的结构和样式。
 
 ## React 的基本工作原理
 
 ### 基本思想
 
-React 组件每次的重新渲染都从状态发生改变的组件开始，递归地调用它的全部子组件的渲染函数，且 patch 新旧 VNode。
+React 每次的重新渲染都从状态发生改变的组件开始，对此组件的新旧 VNode 进行 diff + patch。
 
 ### JSX 语法
 
-React 使用 JSX(JavaScript XML) 这个特定的 DSL 语言来描述 VNode，是 JavaScript 的子集：
+React 使用 JSX(JavaScript XML) 这个特定的 DSL 来描述 VNode，它是 JavaScript 的子集：
 
 ```jsx
 const name = 'nat'
-// 花括号里面的值将被视作JavaScript表达式
+// 花括号里面的内容将被视作JavaScript表达式
 const greeting = <p style={{ color: 'red' }}>hello {name}</p>
 ```
 
@@ -43,7 +43,7 @@ const greeting = h(
 )
 ```
 
-组件拥有和维持着它的状态，如下：
+组件拥有并维持着它的状态，如下：
 
 ```javascript
 const { Component } = React
@@ -72,8 +72,8 @@ class List extends Component {
       fetch(Date.now()).then((result) =>
         this.setState({ dataSource: result?.data ?? [] })
       )
-    }.bind(this) // 事件处理器必须要绑定组件的this，因为获取和更新状态都要从this着手
-    this.clearDataSource = () => this.setState({ dataSource: [] }) // 也可以使用箭头函数解决this绑定问题
+    }.bind(this) // 事件处理器必须要绑定组件本身this，因为获取和更新状态都要从组件本身着手
+    this.clearDataSource = () => this.setState({ dataSource: [] }) // 也可以使用箭头函数解决this绑定的问题
   }
   render() {
     // 返回本组件当前最新的视图，即VNode
@@ -99,16 +99,16 @@ class List extends Component {
 }
 ```
 
-上述这种使用**类**的方式描述组件很形象，组件拥有且维护着自己的状态，组件拥有改变状态的方法，组件通过 render 方法输出组件当前最新状态的视图，但是存在一些缺陷：
+上述这种使用**类**的方式描述组件很形象，组件拥有并维护着自己的状态，组件拥有改变状态的方法，组件通过 render 函数输出组件当前状态的视图，但是存在一些缺陷：
 
-1. 面向类、对象的 OOP 编程思想强调的是：封装、继承、多态，而组件只是很纯粹的描述当前状态下的视图，通常用不到 2 级以上的继承，更用不到多态，仅仅用到了封装
+1. 面向类、对象的 OOP 编程思想强调的是：封装、继承、多态，而组件只是很纯粹的描述当前状态下的视图，通常不存在多层继承，也用不到多态，仅仅用到了封装
 2. JavaScript 归根到底是原型继承，ES6 的 class 也只是语法糖，JavaScript 更适合走函数式编程的风格
 3. 在使用类的时候会经常用到 this 关键字，而 this 关键字在 JavaScript 很具有误导性，它与传统 Java 的 this 截然不同
 4. class 的内存开销较大
 5. 使用 高阶组件 HOC 或 混入 的方式来复用组件的公共逻辑的维护性很差
 6. ...
 
-所以从 React 16.8 版本开始引入了 hooks 的概念，使用函数代替类来描述组件：
+所以从 React 16.8 版本开始引入了 hooks 的概念，使用函数代替类来描述组件，开始走向函数式编程：
 
 ```javascript
 // 由于函数没有实例，从而引入 hooks，使得函数变得有状态
@@ -132,7 +132,7 @@ function List(props) {
   useEffect(function () {
     // 函数组件不再具有具体的生命周期，而是以渲染为单位，每次渲染（浏览器的paint）结束会调用对应的副作用函数
     this.getDataSource(Date.now())
-  }, []) // 第二个参数传入依赖数组，决定了此次渲染结束后是否要调用此副作用，空数组表示：此组件的首次渲染和被卸载的时候触发副作用
+  }, []) // 第二个参数传入依赖数组，决定了此次渲染结束后是否要调用此副作用，空数组表示：副作用只有在此组件首次渲染和被卸载的时候触发
   return (
     <template>
       <h1>here are the lists</h1>
@@ -149,21 +149,15 @@ function List(props) {
 
 ### 基本工作流程总结
 
-React 组件的每次渲染都从状态发生改变的组件开始，递归地调用它的全部子组件的渲染函数，得到当前最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新。由于 VNode 是树结构，故使用递归进行 patch，一旦树结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
+React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个组件。由于 VNode 是树结构，所以使用递归来进行 patch，一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
 
 因此 React 16.8 提出了 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原来需要递归比较的 VNode 的树结构变成了链表结构，在链表结构的基础上实现了：时间切片、暂停恢复、优先级调度、并发、等等的高级特性。
 
-在 React 16.8 提出了时间切片、暂停恢复和基于过期算法的优先级调度系统，在客户端用户代理空闲的时候才进行 patch，当用户代理需要响应用户操作的时候暂停当前 patch，再在下次空闲的时候恢复暂停的比较，高优先级的 patch 任务将暂停当前的低优先级，比如响应用户的输入框输入。
+在 React 16.8 提出了时间切片、暂停恢复和基于过期算法的优先级调度系统，在客户端用户代理空闲的时候才进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) 此 API），当用户代理需要响应用户操作的时候暂停当前 patch，再在下次空闲的时候恢复暂停的比较，高优先级的 patch 任务将暂停当前的低优先级，比如响应用户的输入框输入。
 
-在 React 17 提出了并发特性，而且使用基于 lanes 的算法重构了优先级调度系统。
+在 React 17 提出了并发特性，同时使用基于 lanes 的算法重构了优先级调度系统。
 
-在 React 18 进一步完善了并发特性和优先级调度系统，对外暴露了一些特定的底层 API 给上游框架使用，比如 next.js，现在 React 俨然发展成了一个更加注重底层的框架，应用开发不应该直接基于 React 本身进行开发，而是使用基于 React 的上游框架进行开发。
-
-React 越来越像一个操作系统了。
-
-每个组件的组件状态（对于类组件来说就是它的类实例，对于函数组件来说就是它的 fiber 节点）被附加在各自生成的 VNode 上，下次渲染的时候从旧 VNode 取到此组件的当前状态进行本次渲染。
-
-Preact 框架（版本 1 ~ 8）将组件实例和组件实例对应的 DOM 元素相互关联，组件实例通过 `base` 字段引用它的 DOM 节点，而 DOM 节点通过 `__component` 引用它的组件实例，从而实现组件实例的持久化保存，而且它直接把旧的 DOM 和新的 VNode 进行对比，使得 diff 过程更快。
+在 React 18 进一步完善了并发特性和优先级调度系统，对外暴露了一些特定的底层 API 给上游框架（比如 next.js）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该直接基于 React 本身进行开发，而是使用基于 React 的上游框架进行开发。
 
 ## Vue 的基本工作思想 - Vue2
 
@@ -175,7 +169,7 @@ Preact 框架（版本 1 ~ 8）将组件实例和组件实例对应的 DOM 元�
 
 ### Template 模板语法
 
-和 JSX 一样，也是一种描述 VNode 树结构的 DSL 语言，语法借鉴了著名的模板引擎 mustache，它不像 JSX 那么灵活，但是它提供了 vue-template-compiler 静态优化的能力，当 compiler 把 Template 编译成由 h 函数组成的 render 函数时，可以将静态不发生改变的 VNode 结构固定，在新旧 VNode 对比时，跳过被固定的 VNode 结构从而提高性能。
+和 JSX 一样，也是一种描述 VNode 树结构的 DSL，语法借鉴了著名的模板引擎 mustache，它不像 JSX 那么灵活，但是它提供了 vue-template-compiler 静态优化的能力，当 compiler 把 Template 编译成由 h 函数组成的 render 函数时，可以将静态不发生改变的 VNode 结构固定，在新旧 VNode 对比时，跳过被固定的 VNode 结构从而提高性能。
 
 ```vue
 <template>
@@ -243,9 +237,11 @@ function anonymous() {
 
 ### 基本工作流程总结
 
-每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在 watcher 里面（这个 watcher 就是 render watcher）且执行它，render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集进去，此时这个数据将变成一个依赖且被一个 watcher 观察者观察着，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果，且将其挂载到组件自身属性 `$el` 上，对于 Web 平台就是 DOM 树，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的全部 watcher 都执行，当执行了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 的过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
+每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在 watcher 里面（这个 watcher 就是 render watcher）并执行它，render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集进去，此时这个数据将变成一个依赖并被一个 watcher 观察者观察着，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果，并将其挂载到组件自身属性 `$el` 上，对于 Web 平台就是 DOM 树，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的全部 watcher 都执行，当执行了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 的过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
 
-当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么最简单的方法就是这个子组件返回一个空的注释节点即可`document.createComment(' v-if = false ')`：
+每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从旧 VNode 取到此组件的当前状态进行本次渲染。
+
+当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么最简单的方法就是这个子组件返回一个空的注释节点即可`document.createComment(' because v-if is false ')`：
 
 ```vue
 <template>
