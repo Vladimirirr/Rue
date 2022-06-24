@@ -55,31 +55,25 @@ hook 函数不需要返回值
 ```JavaScript
 init(VNode){
   // 在 VNode 首次创建它的 dom 时，即在 createElm 函数的最开始被调用
-  debugger
 }
 create(emptyVNode, newVNode){
   // 在 VNode 首次创建它的 dom 时，即在 createElm 函数已经创建完了此 VNode 的 dom 后被立刻调用
-  debugger
 }
 insert(VNode){
   // 在 VNode 首次被插入到它的父 dom 或 targetElm 时，它在 patch 函数的末尾被调用
   // 在调用一次 patch 函数时，会初始化一个 insertedVnodeQueue 数组，在 createElm 函数中会把带有 hook.insert 的 VNode push 进去，在 patch 函数的末尾会对 insertedVnodeQueue 里面的 VNode 依次执行它们的 insert 钩子
-  debugger
 }
 prepatch(oldVNode, newVNode){
   // 首次挂载不会触发此方法
   // 在 patchVnode 函数的最开始被调用，此时的 newVNode.elm 还没有被 oldVNode.elm 赋值
-  debugger
 }
 update(oldVNode, newVNode){
   // 首次挂载不触发
   // 在 patchVnode 函数的 update 更新函数集完成后被立刻调用
-  debugger
 }
 postpatch(oldVNode, newVNode){
   // 首次挂载不触发
   // 在 patchVnode 函数的末尾被调用，此时 newVNode.elm 已经最新
-  debugger
 }
 destroy(VNode){
    // 节点从 dom 中被直接或间接移除（由于父节点被移除了导致它的子节点也被移除）
