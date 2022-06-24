@@ -1,4 +1,4 @@
-# React 和 Vue 的基本工作原理
+# React 和 Vue 的基本思想
 
 ## 两者的基本思想
 
@@ -149,7 +149,7 @@ function List(props) {
 
 ### 基本工作流程总结
 
-React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个组件。由于 VNode 是树结构，所以使用递归来进行 patch，一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
+React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个组件的更新。由于 VNode 是树结构，所以使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
 
 因此 React 16.8 提出了 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原来需要递归比较的 VNode 的树结构变成了链表结构，在链表结构的基础上实现了：时间切片、暂停恢复、优先级调度、并发、等等的高级特性。
 
