@@ -76,15 +76,15 @@ postpatch(oldVNode, newVNode){
   // 在 patchVnode 函数的末尾被调用，此时 newVNode.elm 已经最新
 }
 destroy(VNode){
-   // 节点从 dom 中被直接或间接移除（由于父节点被移除了导致它的子节点也被移除）
-   // styleModule 模块默认内置一个 applyDestroyStyle 的 destroy 钩子
-   // 执行此钩子时对应的节点还没从 dom 中被移除，在这里可以对即将被移除的节点设置移除时的 style 样式，将由 applyDestroyStyle 函数应用设置的样式
+  // 节点从 dom 中被直接或间接移除（由于父节点被移除了导致它的子节点也被移除）
+  // styleModule 模块默认内置一个 applyDestroyStyle 的 destroy 钩子
+  // 执行此钩子时对应的节点还没从 dom 中被移除，在这里可以对即将被移除的节点设置移除时的 style 样式，将由 applyDestroyStyle 函数应用设置的样式
 }
 remove(VNode, remove){
-   // 节点从 dom 中被移除
-   // 在移除节点前，将先执行它和它子组件的 destroy 钩子
-   // 此钩子需要执行 remove 函数，将此节点从 dom 移除，因此可以控制节点被移除的时机或在移除前执行一些操作
-   // styleModule 模块默认内置一个 applyRemoveStyle 的 remove 钩子
-   // 只有在此节点的全部 remove 钩子都执行了 remove 函数，才会将其从 dom 移除，全部的 remove 钩子 = 来自全部模块的 remove 钩子们 + 节点自身的 remove 钩子，所以源码里 removeVnodes 函数的 `listeners = cbs.remove.length + 1;` 与 createRmCb 函数返回的函数的 `if (--listeners === 0) doRemoveNode` 相互对应，每次执行 remove 函数使得 listeners - 1，当 listeners 为 0 时才真正执行移除
+  // 节点从 dom 中被移除
+  // 在移除节点前，将先执行它和它子组件的 destroy 钩子
+  // 此钩子需要执行 remove 函数，将此节点从 dom 移除，因此可以控制节点被移除的时机或在移除前执行一些操作
+  // styleModule 模块默认内置一个 applyRemoveStyle 的 remove 钩子
+  // 只有在此节点的全部 remove 钩子都执行了 remove 函数，才会将其从 dom 移除，全部的 remove 钩子 = 来自全部模块的 remove 钩子们 + 节点自身的 remove 钩子，所以源码里 removeVnodes 函数的 `listeners = cbs.remove.length + 1;` 与 createRmCb 函数返回的函数的 `if (--listeners === 0) doRemoveNode` 相互对应，每次执行 remove 函数使得 listeners - 1，当 listeners 为 0 时才真正执行移除
 }
 ```
