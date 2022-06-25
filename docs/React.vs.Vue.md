@@ -108,7 +108,7 @@ class List extends Component {
 5. 使用 高阶组件 HOC 或 混入 的方式来复用组件的公共逻辑的维护性很差
 6. ...
 
-所以从 React 16.8 版本开始引入了 hooks 的概念，使用函数代替类来描述组件，开始走向函数式编程：
+所以从 React 16 版本开始引入了 hooks 的概念，使用函数代替类来描述组件，开始走向函数式编程：
 
 ```javascript
 // 由于函数没有实例，从而引入 hooks，使得函数变得有状态
@@ -149,15 +149,17 @@ function List(props) {
 
 ### 基本工作流程总结
 
-React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个组件的更新。由于 VNode 是树结构，所以使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
+React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个子组件的更新。由于 VNode 是树结构，所以使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
 
-因此 React 16.8 提出了 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原来需要递归比较的 VNode 的树结构变成了链表结构，在链表结构的基础上实现了：时间切片、暂停恢复、优先级调度、并发、等等的高级特性。
+React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快照）、可恢复（回到中断前的快照） 且 支持任务优先级 的更新机制。
 
-在 React 16.8 提出了时间切片、暂停恢复和基于过期算法的优先级调度系统，在客户端用户代理空闲的时候才进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) 此 API），当用户代理需要响应用户操作的时候暂停当前 patch，再在下次空闲的时候恢复暂停的比较，高优先级的 patch 任务将暂停当前的低优先级，比如响应用户的输入框输入。
+因此 React 16 提出 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原本需要递归比较 VNode 的树结构变成了循环比较的类链表结构，在 fiber 的基础上实现了：时间切片、中断、恢复、优先级、并发、等等的高级特性。
 
-在 React 17 提出了并发特性，同时使用基于 lanes 的算法重构了优先级调度系统。
+在 React 16 实现了时间切片、中断恢复和基于过期算法的优先级调度系统，在客户端用户代理空闲的时候进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)），当用户代理需要响应用户操作的时候中断当前 patch，再在下次空闲的时候恢复之前的 patch，高优先级的 patch 任务将中断当前的低优先级任务，比如响应用户的输入框输入。
 
-在 React 18 进一步完善了并发特性和优先级调度系统，对外暴露了一些特定的底层 API 给上游框架（比如 next.js）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该直接基于 React 本身进行开发，而是使用基于 React 的上游框架进行开发。
+在 React 17 使用基于 lanes 的算法重构了优先级调度系统（详情参见此 [PR](https://github.com/facebook/react/pull/18796)），同时提出了并发特性。
+
+在 React 18 进一步完善了并发特性和优先级调度系统，同时暴露出一些特定的底层 API 给上游框架（比如 next.js）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该再直接基于 React 本身，而是使用基于 React 的上游框架进行开发。
 
 ## Vue 的基本工作思想 - Vue2
 
