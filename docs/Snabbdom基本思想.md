@@ -16,7 +16,7 @@
 1. 首次 patch 时，传入的 oldVNode 是目标 dom 元素，即`patch(targetElm: HTMLElement, VNode)`，它被替换成对应的 VNode`{ sel: getSel(oldVNode), data: {}, children: [], elm: oldVNode, key: undefined, text: undefined }`
 2. 比较新旧 VNode 是否为相同的节点类型，即`isSameNode(oldVNode, newVNode) => isSameKey && isSameIs && isSameSel`
 3. 如果相同，进入`patchVNode(oldVNode, newVNode)`
-   1. 参见`更新 patch`的`patchVNode`方法
+   1. 参见`重新 patch`的`patchVNode`方法
 4. 如果不同，按照 newVNode 创建对应的 dom 元素，挂载在`newVNode.elm`上
    1. 保存原始目标元素`oldVNode.elm`为`targetElm`，并得到它的父元素`parentElm`
    2. 进入`createElm(newVNode)`，对着 newVNode 创建对应的 dom
@@ -32,7 +32,7 @@
 2. emptyVNode 即`{ sel: '', data: {}, children: [], elm: undefined, key: undefined, text: undefined }`
 3. `const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule, eventListenersModule])` 对应的 create 函数集就是 `[updateClass, updateProps, updateAttrs, updateDataset, updateStyle, updateEventListeners]`
 
-### 更新 patch
+### 重新 patch
 
 1. `patch(oldVNode, newVNode)` 对新旧 VNode 进行 patch
 2. `patchVNode(oldVNode, newVNode)` 比较新旧 VNode，将不同的地方更新，最终使得新旧 VNode 相同，这个过程就叫做 patch

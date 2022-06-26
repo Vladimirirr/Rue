@@ -3,5 +3,8 @@
 }
 .betweenLine {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+}
+.betweenLine button {
+  margin-left: 10px;
 }
