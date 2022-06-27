@@ -102,10 +102,10 @@ class List extends Component {
 上述这种使用**类**的方式描述组件很形象，组件拥有并维护着自己的状态，组件拥有改变状态的方法，组件通过 render 函数输出组件当前状态的视图，但是存在一些缺陷：
 
 1. 面向类、对象的 OOP 编程思想强调的是：封装、继承、多态，而组件只是很纯粹的描述当前状态下的视图，通常不存在多层继承，也用不到多态，仅仅用到了封装
-2. JavaScript 归根到底是原型继承，ES6 的 class 也只是语法糖，JavaScript 更适合走函数式编程的风格
+2. JavaScript 归根到底是原型继承，ES6 的 class 也只是语法糖（当然`ES2022`推出的私有字段已不再是语法糖），JavaScript 更适合走函数式编程的风格
 3. 在使用类的时候会经常用到 this 关键字，而 this 关键字在 JavaScript 很具有误导性，它与传统 Java 的 this 截然不同
 4. class 的内存开销较大
-5. 使用 高阶组件 HOC 或 混入 的方式来复用组件的公共逻辑的维护性很差
+5. 使用 高阶组件 HOC(High Order Component) 或 混入 的方式来复用组件的公共逻辑的维护性很差
 6. ...
 
 所以从 React 16 版本开始引入了 hooks 的概念，使用函数代替类来描述组件，开始走向函数式编程：
@@ -209,7 +209,7 @@ function anonymous() {
   // _c = createElement = h
   // _v = createTextVNode
   // _s = toString
-  // _u = resolveScopedSlots 去目标元素 DisplayPanel 寻找 key 是 content 的插槽 slot
+  // _u = resolveScopedSlots 格式化传入的数组
   with (this) {
     return _c(
       'div',
@@ -240,6 +240,8 @@ function anonymous() {
 ### 基本工作流程总结
 
 每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在 watcher 里面（这个 watcher 就是 render watcher）并执行它，render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集进去，此时这个数据将变成一个依赖并被一个 watcher 观察者观察着，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果，并将其挂载到组件自身属性 `$el` 上，对于 Web 平台就是 DOM 树，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的全部 watcher 都执行，当执行了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 的过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
+
+Vue 的每个组件管理着自己对应的 dom，对其中的子组件，在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排到本次更新到更新队列里面。
 
 每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从旧 VNode 取到此组件的当前状态进行本次渲染。
 

@@ -42,11 +42,11 @@ pending
 
 ## 学习文档
 
-[<span style="text-decoration: underline;">查看：React 和 Vue2.x 的基本思想</span>](/docs/React.vs.Vue.md)
+1. [<span style="text-decoration: underline;">查看：React 和 Vue2.x 的基本思想</span>](/docs/React.vs.Vue.md)
 
-[<span style="text-decoration: underline;">查看：Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想.md)
+2. [<span style="text-decoration: underline;">查看：Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想.md)
 
-[<span style="text-decoration: underline;">查看：Vue2.x 组件树构建的基本流程</span>](/docs/Vue组件树构建的流程.md)
+3. [<span style="text-decoration: underline;">查看：Vue2.x 组件树构建的基本流程</span>](/docs/Vue组件树构建的流程.md)
 
 ## 功能依赖清单
 
