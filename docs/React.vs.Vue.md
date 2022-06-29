@@ -14,7 +14,7 @@
 
 ### 基本思想
 
-React 每次的重新渲染都从状态发生改变的组件开始，对此组件的新旧 VNode 进行 diff + patch。
+React 每次的重新渲染都从状态发生改变的组件开始，对此组件的新旧 VNode 进行 diff + patch，从而保证组件树一直最新。
 
 ### JSX 语法
 
@@ -155,19 +155,19 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 
 因此 React 16 提出 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原本需要递归比较 VNode 的树结构变成了循环比较的类链表结构，在 fiber 的基础上实现了：时间切片、中断、恢复、优先级、并发、等等的高级特性。
 
-在 React 16 实现了时间切片、中断恢复和基于过期算法的优先级调度系统，在客户端用户代理空闲的时候进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)），当用户代理需要响应用户操作的时候中断当前 patch，再在下次空闲的时候恢复之前的 patch，高优先级的 patch 任务将中断当前的低优先级任务，比如响应用户的输入框输入。
+在 React 16 实现了时间切片、中断恢复和基于过期算法的优先级调度系统，在用户代理空闲的时候进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)），当用户代理需要响应用户操作的时候中断当前 patch 任务（因为响应用户操作是最高优先级任务），再在下次空闲的时候恢复之前被中断的 patch 任务，新发生的高优先级任务将中断当前的低优先级任务，比如响应用户的输入框输入，这种任务优先级抢占模型就是并发模型的基础，从而也开启了 React 并发模型的旅程。
 
-在 React 17 使用基于 lanes 的算法重构了优先级调度系统（详情参见此 [PR](https://github.com/facebook/react/pull/18796)），同时提出了并发特性。
+在 React 17 使用基于 lanes 算法重构了优先级调度系统，健壮了 React 的并发模型（详情参见此 [PR](https://github.com/facebook/react/pull/18796)）。
 
-在 React 18 进一步完善了并发特性和优先级调度系统，同时暴露出一些特定的底层 API 给上游框架（比如 next.js）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该再直接基于 React 本身，而是使用基于 React 的上游框架进行开发。
+在 React 18 进一步完善和优化了并发模型，同时暴露出一些特定的底层 API 给下游框架（比如 `next.js`、`umijs`）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该再直接基于 React 本身，而是使用基于 React 的下游框架进行开发。
 
 ## Vue 的基本工作思想 - Vue2
 
 ### 基本思想
 
 1. 观察者模式（发布订阅模型）：一个解耦对象之间消息通信的范式，前端常见的设计模式
-2. 依赖收集：一个组件`template`、`computed`和`watch`包含的数据就是依赖，观察者观察这些依赖的变化从而做出对应的响应，比如依赖的值改变了就通知组件进行更新
-3. 响应式化的对象：每个组件的数据是一个对象，Vue2 使用 ES5 的 `Object.defineProperty` 方法递归地将对象的全部属性转换为对应的 getter 和 setter 从而实现数据劫持，在 getter 中收集当前依赖的 watcher，在 setter 中触发当前依赖的全部 watcher
+2. 依赖收集：一个组件`template`、`computed`或`watch`包含的组件的一个或多个状态就是依赖（状态是依赖），观察者观察这些依赖的变化从而做出对应的响应，比如`template`的依赖的值改变了就通知此组件进行更新
+3. 响应式化的对象：每个组件的状态是一个对象，Vue2 使用 ES5 的 `Object.defineProperty` 方法递归地将对象的全部属性转换为对应的 getter 和 setter 从而实现数据的劫持，在 getter 中把当前的 watcher 收集到当前的依赖的 watchers 列表里，在 setter 中触发当前依赖的 watchers 里的全部 watcher
 
 ### Template 模板语法
 
@@ -176,7 +176,7 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 ```vue
 <template>
   <div>
-    <!-- 数据name被视图（即在render函数执行的时候读取了此name的值）使用到了，那么它就成为了视图的一个依赖，它会收集当前的watcher（当前是render watcher），当它修改时将触发它已经收集的watcher，也就使得组件重新渲染了 -->
+    <!-- 数据（或状态）name被视图template（即在render函数执行的时候读取了此name的值）使用到了，那么它就成为了视图的一个依赖，它会收集当前的watcher（当前是render watcher）到它的watchers里，当此依赖被修改时将触发它已经收集的watchers，也就使得组件被重新渲染了 -->
     <p style="color: red;">hello {{ name }}</p>
     <DisplayPanel v-on:click="resetName">
       <div slot="content" slot-scope="result">the content of DisplayPanel</div>
@@ -239,11 +239,11 @@ function anonymous() {
 
 ### 基本工作流程总结
 
-每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在 watcher 里面（这个 watcher 就是 render watcher）并执行它，render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集进去，此时这个数据将变成一个依赖并被一个 watcher 观察者观察着，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果，并将其挂载到组件自身属性 `$el` 上，对于 Web 平台就是 DOM 树，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的全部 watcher 都执行，当执行了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 的过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
+每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在一个 watcher 里面（这个 watcher 就是 render watcher）并执行此 watcher，在 render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集到它的 watchers 列表里，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果（其结果将被挂载到组件自身的 `$el` 属性上），之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的 watchers 都执行，当执行到了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
 
-Vue 的每个组件管理着自己对应的 dom，对其中的子组件，在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排到本次更新到更新队列里面。
+Vue 的每个组件管理着自己对应的 dom，对其中的子组件在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排到本次更新到更新队列里面。
 
-每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从旧 VNode 取到此组件的当前状态进行本次渲染。
+每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从 oldVNode 取到此组件的实例进行本次渲染，同时赋值给 newVNode，从而将此组件实例延续下去。
 
 当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么最简单的方法就是这个子组件返回一个空的注释节点即可`document.createComment(' because v-if is false ')`：
 
