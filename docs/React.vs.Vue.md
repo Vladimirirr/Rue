@@ -157,7 +157,7 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 
 在 React 16 实现了时间切片、中断恢复和基于过期算法的优先级调度系统，在用户代理空闲的时候进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)），当用户代理需要响应用户操作的时候中断当前 patch 任务（因为响应用户操作是最高优先级任务），再在下次空闲的时候恢复之前被中断的 patch 任务，新发生的高优先级任务将中断当前的低优先级任务，比如响应用户的输入框输入，这种任务优先级抢占模型就是并发模型的基础，从而也开启了 React 并发模型的旅程。
 
-在 React 17 使用基于 lanes 算法重构了优先级调度系统，健壮了 React 的并发模型（详情参见此 [PR](https://github.com/facebook/react/pull/18796)）。
+在 React 17 优先级调度系统基于 lanes 算法进行了重构，从而健壮了 React 的并发模型（详情参见此 [PR](https://github.com/facebook/react/pull/18796)）。
 
 在 React 18 进一步完善和优化了并发模型，同时暴露出一些特定的底层 API 给下游框架（比如 `next.js`、`umijs`）使用，现在 React 俨然发展成了一个更加注重底层的框架（或者说一个小型的操作系统），应用开发不应该再直接基于 React 本身，而是使用基于 React 的下游框架进行开发。
 
