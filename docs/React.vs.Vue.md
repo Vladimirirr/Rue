@@ -104,7 +104,7 @@ class List extends Component {
 1. 面向类、对象的 OOP 编程思想强调的是：封装、继承、多态，而组件只是很纯粹的描述当前状态下的视图，通常不存在多层继承，也用不到多态，仅仅用到了封装
 2. JavaScript 归根到底是原型继承，ES6 的 class 也只是语法糖（当然`ES2022`推出的私有字段已不再是语法糖），JavaScript 更适合走函数式编程的风格
 3. 在使用类的时候会经常用到 this 关键字，而 this 关键字在 JavaScript 很具有误导性，它与传统 Java 的 this 截然不同
-4. class 的内存开销较大
+4. 大量的类实例也需要大量的内存开销
 5. 使用 高阶组件 HOC(High Order Component) 或 混入 的方式来复用组件的公共逻辑的维护性很差
 6. ...
 
@@ -112,7 +112,7 @@ class List extends Component {
 
 ```javascript
 // 由于函数没有实例，从而引入 hooks，使得函数变得有状态
-// 从广义来讲，hook 本质就是维持一些状态或提供一些特定功能的解决方案，那么自然而然就能复用组件公共的逻辑，这便是自定义 hooks
+// 从广义来讲，hook 本质就是维持一些状态或提供一些特定功能的解决方案，那么自然而然就能复用组件公共的逻辑，这便是自定义 hook
 const { useState, useEffect } = React
 function ListItem(props) {
   const { title, content } = props
@@ -149,7 +149,7 @@ function List(props) {
 
 ### 基本工作流程总结
 
-React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个子组件的更新。由于 VNode 是树结构，所以使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
+React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个子组件的更新。由于 VNode 是树结构，想当然地使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
 
 React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快照）、可恢复（回到中断前的快照） 且 支持任务优先级 的更新机制。
 
@@ -171,7 +171,7 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 
 ### Template 模板语法
 
-和 JSX 一样，也是一种描述 VNode 树结构的 DSL，语法借鉴了著名的模板引擎 mustache，它不像 JSX 那么灵活，但是它提供了 vue-template-compiler 静态优化的能力，当 compiler 把 Template 编译成由 h 函数组成的 render 函数时，可以将静态不发生改变的 VNode 结构固定，在新旧 VNode 对比时，跳过被固定的 VNode 结构从而提高性能。
+和 JSX 一样，也是一种描述 VNode 树结构的 DSL，语法借鉴了著名的模板引擎 mustache，它不像 JSX 那么灵活，但是它为 vue-template-compiler 提供了静态优化的能力，当 compiler 把 template 编译成由 h 函数组成的 render 函数时，可以将静态不发生改变的 VNode 结构固定，在新旧 VNode 对比时，跳过被固定的 VNode 结构从而提高性能。
 
 ```vue
 <template>
@@ -239,9 +239,9 @@ function anonymous() {
 
 ### 基本工作流程总结
 
-每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在一个 watcher 里面（这个 watcher 就是 render watcher）并执行此 watcher，在 render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集到它的 watchers 列表里，render 函数返回的 VNode 树在首次渲染时被生成对应平台的渲染结果（其结果将被挂载到组件自身的 `$el` 属性上），之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的 watchers 都执行，当执行到了 render watcher 也就使得组件开始重新渲染，新旧 VNode 树将进入 diff + patch 过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
+每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在一个 watcher 里面（这个 watcher 就是 render watcher）并执行此 watcher，在 render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集到它的 watchers 列表里，render 函数返回的 VNode 树在首次渲染时被生成对应的 dom 并保存到组件的`$el`，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的 watchers 都执行，当执行到了 render watcher 也就使得组件重新渲染，新旧 VNode 树进入 diff + patch 过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
 
-Vue 的每个组件管理着自己对应的 dom，对其中的子组件在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排到本次更新到更新队列里面。
+Vue 的每个组件管理着自己对应的 dom，它的子组件在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排对应的更新到本次更新队列里面。
 
 每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从 oldVNode 取到此组件的实例进行本次渲染，同时赋值给 newVNode，从而将此组件实例延续下去。
 
