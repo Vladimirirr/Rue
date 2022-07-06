@@ -12,6 +12,8 @@
 React 16.4 生命周期流程图：
 ![alt theLifecycleOfReact16.4](./imgs/the%20lifecycle%20of%20react%20whose%20version%20ge%2016.4.jpg)
 
+> 图表来源：https://github.com/wojtekmaj/react-lifecycle-methods-diagram
+
 ## React with Redux
 
 ## React 18 与并发相关的底层 API
