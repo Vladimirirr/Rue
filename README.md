@@ -36,10 +36,6 @@
 2. 安装依赖 `npm i`
 3. 本地运行 `npm run dev` 就可以看见默认的 TODO List 案例
 
-## 教程
-
-pending
-
 ## 学习文档
 
 1. [<span style="text-decoration: underline;">查看：React 和 Vue2.x 的基本思想</span>](/docs/React.vs.Vue/index.md)
