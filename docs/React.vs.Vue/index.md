@@ -10,11 +10,11 @@
 
 一个组件就是封装了结构`VNode`、行为`JavaScript`和样式`CSS`的对象或函数，由`JavaScript`维持着组件当前的状态并控制着组件当前的结构和样式。
 
-## React 的基本工作原理
+## React 的基本工作思想
 
 ### 基本思想
 
-React 每次的重新渲染都从状态发生改变的组件开始，对此组件的新旧 VNode 进行 diff + patch，从而保证组件树一直最新。
+React 每次的重新渲染都从状态发生改变的组件开始，对此组件的新旧 VNode 进行 patch，从而保证组件树一直最新。
 
 ### JSX 语法
 
@@ -45,7 +45,7 @@ const greeting = h(
 
 组件拥有并维持着它的状态，如下：
 
-```javascript
+```jsx
 const { Component } = React
 class ListItem extends Component {
   constructor(props) {
@@ -85,15 +85,15 @@ class List extends Component {
         </div>
         {/* 由于JSX本质上就是调用h函数的JavaScript表达式，故而可以使用JavaScript表达式的全部特性，相当灵活 */}
         {this.state.dataSource.map(({ title, content }) => (
-          {/* 向子组件传递状态（由表达式计算而来），表达式可以是任何合法的JavaScript表达式，甚至可以传入VNode 或 render函数 */}
+          {/* 向子组件传递状态（由表达式计算而来），表达式可以是任何合法的JavaScript表达式，甚至可以传入 VNode 或 render函数 */}
           {/* 向子组件传递父组件的方法，从而达到在子组件修改父组件状态的能力（闭包特性） */}
           <ListItem title={title} content={content} clear={this.clearDataSource} />
         ))}
       </template>
     )
   }
-  onMount() {
-    // 组件被挂载时开始加载数据
+  componentDidMount() {
+    // 组件挂载完成，开始获取数据
     this.getDataSource(Date.now())
   }
 }
@@ -110,7 +110,7 @@ class List extends Component {
 
 所以从 React 16 版本开始引入了 hooks 的概念，使用函数代替类来描述组件，开始走向函数式编程：
 
-```javascript
+```jsx
 // 由于函数没有实例，从而引入 hooks，使得函数变得有状态
 // 从广义来讲，hook 本质就是维持一些状态或提供一些特定功能的解决方案，那么自然而然就能复用组件公共的逻辑，这便是自定义 hook
 const { useState, useEffect } = React
@@ -149,13 +149,28 @@ function List(props) {
 
 ### 基本工作流程总结
 
-React 每次渲染都从状态发生改变的组件开始，递归它的子组件并得到最新的 VNode 树，再 patch 新旧 VNode，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过某一个子组件的更新。由于 VNode 是树结构，想当然地使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
+React 的一个组件触发更新，此组件执行它的 render 函数得出最新的 VNode 树，再进入 patch，使得渲染目标保持最新，可以使用 shouldComponentUpdate（对于类组件）或 memo（对于函数组件）跳过其中某一个子组件的更新。由于 VNode 是树结构，使用递归来进行 patch，不过一旦树的结构过于复杂，递归就很消耗性能，造成界面的卡顿甚至是短时间的无响应，从而影响用户的体验，而且 JSX 本质是 JavaScript 代码，过于灵活，无法在组件编译时对它的 render 函数进行静态优化（对比于 Vue 的 Template 语法），导致了 React 必须在运行时进行优化（动态优化）。
 
-React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快照）、可恢复（回到中断前的快照） 且 支持任务优先级 的更新机制。
+为此，React 15 到 React 16 重构的目的就是实现一套 可中断（快照）、可恢复（回到中断前的快照） 且 支持任务优先级 的更新机制：
 
-因此 React 16 提出 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构，简而言之，就是将原本需要递归比较 VNode 的树结构变成了循环比较的类链表结构，在 fiber 的基础上实现了：时间切片、中断、恢复、优先级、并发、等等的高级特性。
+1. 把长时间运行的 JavaScript 任务拆成多份运行（时间切片），把 JavaScript 引擎控制权交还给浏览器，从而保证页面的流畅
+2. 对于紧急的任务（比如响应用户的点击操作）赋予高优先级，让它能中断当前低优先级的任务（即抢占 JavaScript 引擎的控制权），从而提高交互的体验
+
+而 React 15 的传统树结构 VNode 无法中断的主要原因是：
+
+1. VNode 树是递归地边比较边修改 dom，如果进行到一半被中断，那用户将看到一个断层的、不完整的、毫无意义的中间界面
+2. 每个 VNode 节点只保存了 children 节点，一旦被中断，无法再找到它的 parent 节点
+
+解决上述问题：
+
+1. 比较的时候不修改对应的 dom，而是将需要改变的地方都记录下来，等比较完成一次性修改 dom，所以 React 把一次渲染变成了 reconcile + commit，reconcile 阶段记录需要改变的地方（这个过程可以被中断，由 React 的任务调度系统 scheduler 安排），commit 阶段一次性修改 dom，最终一次渲染 = render(reconcile + scheduler) + commit
+2. 提出新的 [fiber](https://github.com/acdlite/react-fiber-architecture) 架构以代替传统的树结构的 VNode，新架构下的 React 会把 render 函数输出的 VNode 树转成对应的 fiber 结构，简而言之，fiber 结构就是将原本需要递归比较 VNode 的树结构变成了循环比较的类链表结构
+
+接下来 React 在 fiber 基础上实现：时间切片、中断和恢复、优先级、并发、等等的高级特性。
 
 在 React 16 实现了时间切片、中断恢复和基于过期算法的优先级调度系统，在用户代理空闲的时候进行 patch（参考 [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)），当用户代理需要响应用户操作的时候中断当前 patch 任务（因为响应用户操作是最高优先级任务），再在下次空闲的时候恢复之前被中断的 patch 任务，新发生的高优先级任务将中断当前的低优先级任务，比如响应用户的输入框输入，这种任务优先级抢占模型就是并发模型的基础，从而也开启了 React 并发模型的旅程。
+
+并发让 React 能够同时准备多个 UI 版本，从而提升用户体验。
 
 在 React 17 优先级调度系统基于 lanes 算法进行了重构，从而健壮了 React 的并发模型（详情参见此 [PR](https://github.com/facebook/react/pull/18796)）。
 
@@ -166,8 +181,8 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 ### 基本思想
 
 1. 观察者模式（发布订阅模型）：一个解耦对象之间消息通信的范式，前端常见的设计模式
-2. 依赖收集：一个组件`template`、`computed`或`watch`包含的组件的一个或多个状态就是依赖（状态是依赖），观察者观察这些依赖的变化从而做出对应的响应，比如`template`的依赖的值改变了就通知此组件进行更新
-3. 响应式化的对象：每个组件的状态是一个对象，Vue2 使用 ES5 的 `Object.defineProperty` 方法递归地将对象的全部属性转换为对应的 getter 和 setter 从而实现数据的劫持，在 getter 中把当前的 watcher 收集到当前的依赖的 watchers 列表里，在 setter 中触发当前依赖的 watchers 里的全部 watcher
+2. 依赖收集：一个组件`template`、`computed`使用到的和`watch`指定的状态就是依赖，观察者观察这些依赖的变化从而做出对应的响应，比如`template`的依赖改变了就通知对应的组件进行更新
+3. 响应式化的对象：每个组件的状态是一个数据对象，Vue2 使用 ES5 的 `Object.defineProperty` 方法递归地将对象的全部属性转换为对应的 getter 和 setter 从而实现数据的劫持，在 getter 中把当前的 watcher 收集到当前的依赖的 watchers 列表里，在 setter 中触发当前依赖的 watchers 里的全部 watcher
 
 ### Template 模板语法
 
@@ -176,7 +191,7 @@ React 15 到 React 16 重构的目的就是实现一套 可暂停或中断（快
 ```vue
 <template>
   <div>
-    <!-- 数据（或状态）name被视图template（即在render函数执行的时候读取了此name的值）使用到了，那么它就成为了视图的一个依赖，它会收集当前的watcher（当前是render watcher）到它的watchers里，当此依赖被修改时将触发它已经收集的watchers，也就使得组件被重新渲染了 -->
+    <!-- 状态name被视图template（即在render函数执行的时候读取了此name的值）使用到了，那么它就成为了视图的一个依赖，它会收集视图的 render watcher 到它的watchers里，当此依赖被修改时将触发它已经收集的watchers，也就使得组件被重新渲染了 -->
     <p style="color: red;">hello {{ name }}</p>
     <DisplayPanel v-on:click="resetName">
       <div slot="content" slot-scope="result">the content of DisplayPanel</div>
@@ -239,13 +254,15 @@ function anonymous() {
 
 ### 基本工作流程总结
 
-每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在一个 watcher 里面（这个 watcher 就是 render watcher）并执行此 watcher，在 render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集到它的 watchers 列表里，render 函数返回的 VNode 树在首次渲染时被生成对应的 dom 并保存到组件的`$el`，之后，依赖改变了会导致它的 setter 被执行，setter 将它已经收集的 watchers 都执行，当执行到了 render watcher 也就使得组件重新渲染，新旧 VNode 树进入 diff + patch 过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件的全部子组件。
+每个 Vue 组件是一个配置对象（选项式 API 语法），配置对象描述了组件的初始数据、方法、render 函数、计算属性、生命周期、等等，当组件实例首次渲染时，会将 render 函数包裹在一个 watcher 里面（这个 watcher 就是 render watcher）并执行此 watcher，在 render 函数里面使用到的数据在被读取时将触发它的 getter，在 getter 里面将当前的 watcher 收集到它的 watchers 列表里，render 函数返回的 VNode 树在首次渲染时被生成对应的 dom 并保存到组件的`$el`上，将来，依赖（数据）改变了会导致它的 setter 被执行，setter 将它已经收集的 watchers 都执行，当执行到了 render watcher 也就使得组件重新渲染，新旧 VNode 树进入 patch 过程，最终保持组件的 `$el` 最新，这也意味着 Vue2 的更新颗粒度是组件级别的，而非 React 发生改变的组件和它的全部子组件。
+
+一个依赖可能收集了多个组件的 render watcher，比如使用 provide 注入的响应式依赖，当此依赖改变时，对应的全部组件也都将触发更新。
 
 Vue 的每个组件管理着自己对应的 dom，它的子组件在 patch 时对其赋最新值（比如对 props 赋最新值），让子组件根据新旧值决定自己是否需要更新，需要的话安排对应的更新到本次更新队列里面。
 
 每个组件的组件实例被附加在各自生成的 VNode 上，下次渲染的时候从 oldVNode 取到此组件的实例进行本次渲染，同时赋值给 newVNode，从而将此组件实例延续下去。
 
-当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么最简单的方法就是这个子组件返回一个空的注释节点即可`document.createComment(' because v-if is false ')`：
+当一个组件的 `v-if` 是假值的时候，它就应该从父组件的 `$el` 移除，那么最简单的方法就是这个子组件直接返回一个注释节点即可`document.createComment(' because v-if is false ')`：
 
 ```vue
 <template>
@@ -270,3 +287,29 @@ function anonymous() {
   }
 }
 ```
+
+内置组件`keep-alive`和`component`基本工作方式：
+
+```vue
+<template>
+  <!-- keep-alive可以指定最多的缓存数量，使用的是LRU算法 -->
+  <!-- keep-alive还可以指定黑白名单 -->
+  <keep-alive>
+    <!-- currentComponent可以是一个已经被注册过的组件名，也可以是一个组件配置对象 -->
+    <component :is="currentComponent"></component>
+  </keep-alive>
+</template>
+```
+
+对应的 render 函数：
+
+```javascript
+function anonymous() {
+  with (this) {
+    // 可以看出，内置组件component只是很简单地将is对应的值传给createElement函数，再使用tag标记它来自于内置组件component
+    return _c('keep-alive', [_c(currentComponent, { tag: 'component' })], 1)
+  }
+}
+```
+
+内置组件`keep-alive`将保存传给它的第一个子节点的 VNode 树，而 VNode 上存在它对应的组件实例（如果缓存的是组件），从而实现对应 dom 的缓存。
