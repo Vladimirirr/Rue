@@ -42,9 +42,11 @@
 
 2. [<span style="text-decoration: underline;">查看：Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想/index.md)
 
-3. [<span style="text-decoration: underline;">查看：Vue2.x 组件树构建的基本流程</span>](/docs/Vue组件树构建的流程/index.md)
+3. [<span style="text-decoration: underline;">查看：Vue2 组件树构建的基本流程</span>](/docs/Vue2组件树构建的流程/index.md)
 
 4. [<span style="text-decoration: underline;">查看：React 知识清单</span>](/docs/React知识清单/index.md)
+
+5. [<span style="text-decoration: underline;">查看：Vue3 响应式基础</span>](/docs/Vue3响应式基础/index.md)
 
 ## 功能依赖清单
 
