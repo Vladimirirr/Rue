@@ -54,6 +54,8 @@
 
 1. [<span style="text-decoration: underline;">查看：uniapp 基本思想</span>](/docs/others/uniapp%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3/index.md)
 
+2. [<span style="text-decoration: underline;">查看：vite 配置</span>](/docs/others/vite%E9%85%8D%E7%BD%AE/index.md)
+
 ## 功能依赖清单
 
 1. VNode 和 diff 算法：[snabbdom](https://github.com/snabbdom/snabbdom)
