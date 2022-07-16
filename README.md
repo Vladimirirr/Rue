@@ -38,6 +38,8 @@
 
 ## 学习文档
 
+### Vue 与 React
+
 1. [<span style="text-decoration: underline;">查看：React 和 Vue2.x 的基本思想</span>](/docs/React.vs.Vue/index.md)
 
 2. [<span style="text-decoration: underline;">查看：Snabbdom 的基本思想</span>](/docs/Snabbdom基本思想/index.md)
@@ -47,6 +49,10 @@
 4. [<span style="text-decoration: underline;">查看：React 知识清单</span>](/docs/React知识清单/index.md)
 
 5. [<span style="text-decoration: underline;">查看：Vue3 响应式基础</span>](/docs/Vue3响应式基础/index.md)
+
+### 其他文档
+
+1. [<span style="text-decoration: underline;">查看：uniapp 基本思想</span>](/docs/others/uniapp%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3/index.md)
 
 ## 功能依赖清单
 
