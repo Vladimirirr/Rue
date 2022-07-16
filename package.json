@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "vite serve --port=3000",
     "build": "vite build",
-    "test-snabbdom": "vite serve testSnabbdom --port=3001"
+    "testSnabbdom": "vite serve testSnabbdom --port=3001",
+    "updateDocs": "node docs/updateDocs.js"
   },
   "repository": {
     "type": "git",
