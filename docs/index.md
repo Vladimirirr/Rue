@@ -13,7 +13,7 @@
 
 # 其他文档
 
-1. [查看：others/uniapp基本思想](/docs/others/uniapp基本思想/index.md)
+1. [查看：uniapp基本思想](/docs/others/uniapp基本思想/index.md)
 
-2. [查看：others/vite配置](/docs/others/vite配置/index.md)
+2. [查看：vite配置](/docs/others/vite配置/index.md)
 

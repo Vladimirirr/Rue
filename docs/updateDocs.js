@@ -14,8 +14,18 @@ const getAllDocsNames = async (targetPath) => {
 }
 
 const createMarkdownContent = (list, title) => {
+  const resolveName = (name) => {
+    const index = name.indexOf('/')
+    if (~index) {
+      // 子目录列表
+      return name.substring(index + 1)
+    } else {
+      return name
+    }
+  }
   const lineList = list.map(
-    (name, i) => `${i + 1}. [查看：${name}](/docs/${name}/index.md)`
+    (name, i) =>
+      `${i + 1}. [查看：${resolveName(name)}](/docs/${name}/index.md)`
   )
   const space = '\u0020'
   const gapLine = '\n'.repeat(2)
