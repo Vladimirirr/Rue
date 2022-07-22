@@ -196,6 +196,7 @@ React 的一个组件触发更新，此组件执行它的 render 函数得出最
     <DisplayPanel v-on:click="resetName">
       <div slot="content" slot-scope="result">the content of DisplayPanel</div>
     </DisplayPanel>
+    <slot name="footer">defaultSlotValue</slot>
   </div>
 </template>
 <script lang="javascript">
@@ -225,6 +226,7 @@ function anonymous() {
   // _v = createTextVNode
   // _s = toString
   // _u = resolveScopedSlots 格式化传入的数组
+  // _t = renderSlot 生成此slot对应的VNode
   with (this) {
     return _c(
       'div',
@@ -245,8 +247,12 @@ function anonymous() {
             },
           ]),
         }),
+        _t('footer', function () {
+          // 在传给此组件的scopedSlots（渲染render数组）和slots（VNode数组）中寻找对应的slot映射，没找到就返回默认内容
+          return [_v('defaultSlotValue')]
+        }),
       ],
-      1
+      2
     )
   }
 }
