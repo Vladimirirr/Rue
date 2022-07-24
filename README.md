@@ -47,4 +47,4 @@
 
 ## 我的技术博客
 
-https://www.cnblogs.com/ryzz
+https://github.com/Vladimirirr/MyAwesomeCareerBlogs
